@@ -14,3 +14,8 @@
   justificativas, cuidados e código (`codigo = TRUE`) e `as.data.frame()` para
   exportar sugestões, itens ou alertas.
 * Etapa 4: vignette "Estudo de caso: Vale do Juruá (Acre)" e README.
+* Documentação: página geral do pacote (`?rsguia`), página dos dados de exemplo
+  (`?dados_jurua`), vignette "Criando suas próprias regras", site pkgdown e
+  manual de referência em PDF.
+* `regras_rsguia()` e a leitura de tabelas aceitam CSV com ponto e vírgula e
+  codificação latin1 (como o Excel salva).

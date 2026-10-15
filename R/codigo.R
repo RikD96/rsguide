@@ -13,7 +13,7 @@
 
 ler_modelo <- function(regra) {
   arquivo <- NA_character_
-  if ("exemplo" %in% names(regra) && !is.na(regra$exemplo)) {
+  if ("exemplo" %in% names(regra) && !is.na(regra$exemplo) && nzchar(regra$exemplo)) {
     arquivo <- regra$exemplo
     if (!file.exists(arquivo)) arquivo <- system.file("exemplos", arquivo, package = "rsguia")
   } else {

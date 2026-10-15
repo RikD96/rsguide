@@ -7,7 +7,8 @@
 regras_rsguia(arquivo = NULL)
 }
 \arguments{
-\item{arquivo}{Opcional. Caminho de um CSV (UTF-8) com regras próprias.
+\item{arquivo}{Opcional. Caminho de um CSV com regras próprias, separado
+por vírgula ou ponto e vírgula, em UTF-8 ou latin1 (como o Excel salva).
 Se omitido, usa a tabela que acompanha o pacote
 (\code{system.file("regras", "regras.csv", package = "rsguia")}).}
 }

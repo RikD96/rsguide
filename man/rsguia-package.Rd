@@ -4,10 +4,91 @@
 \name{rsguia-package}
 \alias{rsguia}
 \alias{rsguia-package}
-\title{rsguia: Diagnóstico de Dados de Sensoriamento Remoto e Sugestão de Análises}
+\title{rsguia: diagnóstico de dados de sensoriamento remoto e sugestão de análises}
 \description{
-Recebe dados de sensoriamento remoto (rasters, vetores e tabelas com coordenadas), identifica automaticamente o tipo de dado, as bandas e o provável sensor, e sugere análises possíveis com justificativas em linguagem simples, cuidados e exemplos de código. Voltado a ecólogos e estudantes iniciantes.
+O rsguia recebe dados de sensoriamento remoto, identifica automaticamente
+o que eles são e sugere quais análises são possíveis. Cada sugestão vem
+com uma justificativa em linguagem simples, os cuidados necessários e um
+exemplo de código já preenchido com os seus arquivos e bandas. O pacote
+\strong{não executa} as análises: ele diagnostica e recomenda.
 }
+\section{Fluxo de uso}{
+
+\enumerate{
+\item \code{\link[=diagnosticar]{diagnosticar()}} recebe os dados (arquivos, pastas ou objetos do R) e
+descreve cada um: tipo, camadas, resolução, sistema de coordenadas,
+bandas e sensor, escala dos valores, MDE, séries temporais e
+sobreposição entre raster e vetor. Em seguida chama
+\code{\link[=sugerir_analises]{sugerir_analises()}}.
+\item \code{print()} mostra o diagnóstico, os alertas e a lista de análises
+sugeridas.
+\item \link[=summary.rsguia_diagnostico]{summary()} mostra a justificativa, os
+cuidados e os pacotes de cada análise.
+\item \code{\link[=ver_codigo]{ver_codigo()}} mostra o código de exemplo, pronto para copiar.
+\item \link[=as.data.frame.rsguia_diagnostico]{as.data.frame()} exporta o
+relatório como tabela.
+}
+}
+
+\section{Entradas aceitas}{
+
+\itemize{
+\item Rasters: arquivos \code{.tif}, \code{.tiff}, \code{.vrt}, \code{.img}, \code{.jp2}, \code{.nc},
+\code{.grd}, \code{.asc} ou objetos \code{SpatRaster} (terra).
+\item Vetores: arquivos \code{.shp}, \code{.gpkg}, \code{.geojson}, \code{.json}, \code{.kml} ou
+objetos \code{sf}, \code{sfc} e \code{SpatVector}.
+\item Tabelas com coordenadas: arquivos \code{.csv}, \code{.txt}, \code{.tsv} (separados por
+vírgula, ponto e vírgula ou tabulação) ou \code{data.frame}s. Colunas
+reconhecidas: \code{lon}/\code{lat}, \code{long}/\code{lat}, \code{lng}/\code{lat},
+\code{longitude}/\code{latitude}, \code{decimalLongitude}/\code{decimalLatitude} (GBIF),
+\code{x}/\code{y}, \code{easting}/\code{northing}, \code{utm_x}/\code{utm_y}, entre outras.
+\item Pastas: todos os arquivos reconhecidos dentro da pasta.
+\item Várias entradas ao mesmo tempo: \code{diagnosticar(imagem, pontos)}.
+}
+}
+
+\section{Sensores e bandas reconhecidos}{
+
+\itemize{
+\item Sentinel-2: \code{B1}/\code{B01} a \code{B12}, \code{B8A}, \code{SCL}, inclusive dentro de nomes
+de arquivo como \code{..._B04_10m.jp2}.
+\item Landsat 8/9 (Coleção 2): \code{SR_B1} a \code{SR_B7}, \code{ST_B10}, \code{QA_PIXEL} e os
+nomes curtos \code{B1} a \code{B11}.
+\item Landsat 4-7 (Coleção 2): \code{SR_B1} a \code{SR_B5}, \code{SR_B7}, \code{ST_B6}.
+\item Nomes genéricos, em inglês ou português: \code{blue}/\code{azul},
+\code{green}/\code{verde}, \code{red}/\code{vermelho}, \code{rededge}, \code{nir}, \code{swir1}, \code{swir2},
+\code{thermal}, além dos nomes usados em catálogos STAC (\code{nir08}, \code{swir16},
+\code{swir22}...).
+}
+
+A correspondência fica em \code{system.file("regras", "bandas.csv", package = "rsguia")}. Quando os nomes servem para mais de um sensor, o pacote avisa;
+informe o sensor com \code{diagnosticar(x, sensor = "landsat89")}.
+}
+
+\section{Opções}{
+
+\itemize{
+\item \code{rsguia.min_bandas_multiespectral} (padrão 4): número mínimo de bandas
+espectrais para considerar o dado multiespectral.
+\item \code{rsguia.min_datas_serie_longa} (padrão 10): número mínimo de datas para
+sugerir análise de tendência.
+\item \code{rsguia.tamanho_amostra} (padrão 100000): número de células lidas para
+estimar as estatísticas de rasters grandes.
+}
+}
+
+\section{Para saber mais}{
+
+\itemize{
+\item \code{vignette("estudo-de-caso-jurua", package = "rsguia")}: estudo de caso
+com imagens Sentinel-2 do rio Juruá (AC).
+\item \code{vignette("criando-regras", package = "rsguia")}: como acrescentar
+análises novas à tabela de regras.
+\item \code{\link[=regras_rsguia]{regras_rsguia()}}: a tabela de regras e as etiquetas disponíveis.
+\item \link{dados_jurua}: os dados de exemplo.
+}
+}
+
 \author{
 \strong{Maintainer}: Henrique Paulo \email{mundo.virais@gmail.com}
 
@@ -17,4 +98,4 @@ Authors:
 }
 
 }
-\keyword{internal}
+\keyword{package}
