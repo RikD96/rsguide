@@ -47,7 +47,15 @@ detectar_escala <- function(valores, bandas, sensor) {
     if (mx <= 65535 && ((landsat && q[2] >= 5000) || (!sentinel && q[1] >= 5000))) {
       return(nova_escala("landsat_c2"))
     }
-    if (q[3] <= 20000) return(nova_escala("inteiro_10000"))
+    if (q[3] <= 20000) {
+      escala <- nova_escala("inteiro_10000")
+      # Sentinel-2 L2A (baseline 04.00+) soma 1000 aos valores: quase nada fica abaixo disso
+      if (sentinel && q[1] >= 1000) {
+        escala$descricao <- "inteiros escalonados com deslocamento (reflect\u00e2ncia = (valor \u2212 1000) / 10.000)"
+        escala$deslocamento <- -0.1
+      }
+      return(escala)
+    }
   }
   nova_escala("desconhecida")
 }

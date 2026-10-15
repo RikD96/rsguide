@@ -97,7 +97,9 @@ alertas_raster <- function(item, valores) {
   tipo <- item$escala$tipo
   if (tipo == "inteiro_10000") {
     msg <- "Os valores parecem reflect\u00e2ncia \u00d7 10.000. Para \u00edndices como EVI e SAVI, converta antes: r / 10000."
-    if (isTRUE(item$sensor$sensor == "sentinel2")) {
+    if (isTRUE(item$escala$deslocamento == -0.1)) {
+      msg <- "Os menores valores ficam acima de 1000: a imagem parece ter o deslocamento de +1000 do Sentinel-2 L2A (processamento a partir de 25/01/2022, incluindo a Cole\u00e7\u00e3o 1 reprocessada). Converta para reflect\u00e2ncia com (r - 1000) / 10000 antes de calcular \u00edndices."
+    } else if (isTRUE(item$sensor$sensor == "sentinel2")) {
       msg <- paste(msg, "Aten\u00e7\u00e3o: imagens Sentinel-2 L2A processadas a partir de 25/01/2022 t\u00eam um deslocamento de \u22121000 [reflect\u00e2ncia = (valor \u2212 1000) / 10000]; alguns provedores j\u00e1 removem esse deslocamento, verifique o seu.")
     }
     a[[length(a) + 1]] <- alerta(id, msg, "info")

@@ -45,7 +45,41 @@ print.rsguia_diagnostico <- function(x, ...) {
       cat(simb, " [", x$alertas$item[k], "] ", x$alertas$mensagem[k], "\n", sep = "")
     }
   }
+  if (!is.null(x$sugestoes)) imprimir_sugestoes(x$sugestoes)
   invisible(x)
+}
+
+escrever <- function(texto, recuo, recuo_seguinte = recuo + 2) {
+  largura <- max(40, getOption("width", 80) - 2)
+  cat(strwrap(texto, width = largura, indent = recuo, exdent = recuo_seguinte), sep = "\n")
+}
+
+imprimir_sugestoes <- function(s) {
+  cat("\n", cli::rule(left = sprintf("An\u00e1lises sugeridas (%d)", length(unique(s$id))), line = 2),
+      "\n", sep = "")
+  if (!nrow(s)) {
+    cat("Nenhuma an\u00e1lise da tabela de regras se aplica a estes dados.\n")
+    return(invisible())
+  }
+  n <- 0
+  for (categoria in unique(s$categoria)) {
+    cat("\n", cli::style_bold(categoria), "\n", sep = "")
+    bloco <- s[s$categoria == categoria, , drop = FALSE]
+    for (id in unique(bloco$id)) {
+      r <- bloco[bloco$id == id, , drop = FALSE]
+      n <- n + 1
+      cat(sprintf("%d. %s ", n, r$analise[1]), cli::col_grey(sprintf("[%s]", id)), "\n", sep = "")
+      escrever(paste("Aplica-se a:", paste(unique(r$aplica_a), collapse = "; ")), 3)
+      escrever(paste("Por qu\u00ea:", r$justificativa[1]), 3)
+      cat("   Cuidados:\n")
+      for (cuidado in trimws(strsplit(r$cuidados[1], "|", fixed = TRUE)[[1]])) {
+        escrever(paste("-", cuidado), 5, 7)
+      }
+      escrever(paste("Pacotes:", r$pacotes[1]), 3)
+    }
+  }
+  cat("\n", cli::col_blue("i"), " Para ver o c\u00f3digo de exemplo: ver_codigo(diagnostico, \"",
+      s$id[1], "\"). Para todos: ver_codigo(diagnostico).\n", sep = "")
 }
 
 linha <- function(...) cat(cli::symbol$bullet, " ", ..., "\n", sep = "")

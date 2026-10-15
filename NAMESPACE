@@ -2,3 +2,6 @@
 
 S3method(print,rsguia_diagnostico)
 export(diagnosticar)
+export(regras_rsguia)
+export(sugerir_analises)
+export(ver_codigo)

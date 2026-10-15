@@ -4,7 +4,13 @@
 \alias{diagnosticar}
 \title{Diagnosticar dados de sensoriamento remoto}
 \usage{
-diagnosticar(..., sensor = NULL, crs_tabela = NULL)
+diagnosticar(
+  ...,
+  sensor = NULL,
+  crs_tabela = NULL,
+  sugerir = TRUE,
+  regras = NULL
+)
 }
 \arguments{
 \item{...}{Um ou mais dados: objetos \code{SpatRaster} (terra), objetos \code{sf},
@@ -19,12 +25,18 @@ falha ou é ambígua: \code{"sentinel2"}, \code{"landsat89"}, \code{"landsat457"
 \item{crs_tabela}{Opcional. CRS das coordenadas de tabelas (código EPSG ou
 texto aceito por \code{\link[sf:st_crs]{sf::st_crs()}}). Se omitido, graus decimais são
 tratados como WGS 84 (EPSG:4326).}
+
+\item{sugerir}{Se \code{TRUE} (padrão), já sugere as análises possíveis com
+\code{\link[=sugerir_analises]{sugerir_analises()}}.}
+
+\item{regras}{Opcional. Regras próprias (\code{data.frame} ou caminho de CSV)
+repassadas a \code{\link[=sugerir_analises]{sugerir_analises()}}; veja \code{\link[=regras_rsguia]{regras_rsguia()}}.}
 }
 \value{
 Um objeto da classe \code{rsguia_diagnostico}, uma lista com os
 elementos \code{itens} (diagnóstico de cada dado), \code{cenas}, \code{series},
 \code{sobreposicoes}, \code{contextos} (conjuntos de etiquetas usados pelas regras
-de recomendação) e \code{alertas}.
+de recomendação), \code{alertas} e, se \code{sugerir = TRUE}, \code{sugestoes}.
 }
 \description{
 Identifica automaticamente o tipo de dado entregue (raster, vetor ou tabela

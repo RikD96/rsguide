@@ -63,10 +63,13 @@ ler_caminho <- function(caminho) {
     return(list(list(tipo = "raster", objeto = terra::rast(caminho), nome = nome)))
   }
   if (ext %in% EXT_VETOR) {
-    return(list(list(tipo = "vetor", objeto = sf::st_read(caminho, quiet = TRUE), nome = nome)))
+    return(list(list(tipo = "vetor", objeto = sf::st_read(caminho, quiet = TRUE), nome = nome,
+                     fonte = caminho)))
   }
   if (ext %in% EXT_TABELA) {
-    return(list(list(tipo = "tabela", objeto = ler_csv(caminho), nome = nome)))
+    df <- ler_csv(caminho)
+    return(list(list(tipo = "tabela", objeto = df, nome = nome, fonte = caminho,
+                     sep = attr(df, "rsguia_sep"))))
   }
   cli::cli_abort("Formato de arquivo n\u00e3o reconhecido: {.path {caminho}}")
 }
@@ -76,7 +79,9 @@ ler_csv <- function(caminho) {
   cabecalho <- readLines(caminho, n = 1, warn = FALSE)
   contagem <- vapply(c(",", ";", "\t"), function(s) lengths(regmatches(cabecalho, gregexpr(s, cabecalho, fixed = TRUE))), numeric(1))
   sep <- names(which.max(contagem))
-  utils::read.table(caminho, header = TRUE, sep = sep, dec = if (sep == ";") "," else ".",
-                    quote = "\"", stringsAsFactors = FALSE, check.names = FALSE,
-                    comment.char = "", fill = TRUE)
+  df <- utils::read.table(caminho, header = TRUE, sep = sep, dec = if (sep == ";") "," else ".",
+                          quote = "\"", stringsAsFactors = FALSE, check.names = FALSE,
+                          comment.char = "", fill = TRUE)
+  attr(df, "rsguia_sep") <- sep
+  df
 }
