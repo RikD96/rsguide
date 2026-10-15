@@ -1,5 +1,4 @@
 url: ~
-lang: pt
 template:
   bootstrap: 5
 
@@ -9,32 +8,32 @@ navbar:
     right: [search]
 
 reference:
-  - title: Diagnóstico e sugestões
-    desc: Ponto de partida. Entregue os dados e receba o diagnóstico com as análises possíveis.
+  - title: Diagnosis and suggestions
+    desc: Start here. Give the data and get the diagnosis with the possible analyses.
     contents:
-      - diagnosticar
-      - sugerir_analises
-  - title: Lendo e exportando os resultados
+      - diagnose
+      - suggest_analyses
+  - title: Reading and exporting the results
     contents:
-      - ver_codigo
-      - resumo
-  - title: Regras de recomendação
-    desc: A tabela que decide o que sugerir, e que você pode ampliar.
+      - show_code
+      - diagnosis-summary
+  - title: Recommendation rules
+    desc: The table that decides what to suggest, and that you can extend.
     contents:
-      - regras_rsguia
-  - title: Dados de exemplo
+      - rsguia_rules
+  - title: Example data
     contents:
-      - dados_jurua
-  - title: Sobre o pacote
+      - jurua_data
+  - title: About the package
     contents:
       - rsguia-package
 
 articles:
-  - title: Guias
+  - title: Guides
     navbar: ~
     contents:
-      - estudo-de-caso-jurua
-      - criando-regras
+      - case-study-jurua
+      - custom-rules
 
 news:
   cran_dates: false

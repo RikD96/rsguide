@@ -4,88 +4,87 @@
 \name{rsguia-package}
 \alias{rsguia}
 \alias{rsguia-package}
-\title{rsguia: diagnóstico de dados de sensoriamento remoto e sugestão de análises}
+\title{rsguia: diagnosis of remote sensing data and suggestion of analyses}
 \description{
-O rsguia recebe dados de sensoriamento remoto, identifica automaticamente
-o que eles são e sugere quais análises são possíveis. Cada sugestão vem
-com uma justificativa em linguagem simples, os cuidados necessários e um
-exemplo de código já preenchido com os seus arquivos e bandas. O pacote
-\strong{não executa} as análises: ele diagnostica e recomenda.
+rsguia takes remote sensing data, automatically identifies what they are
+and suggests which analyses are possible. Each suggestion comes with a
+plain-language rationale, the necessary caveats and an example code
+snippet already filled in with your files and bands. The package does
+\strong{not run} the analyses: it diagnoses and recommends.
 }
-\section{Fluxo de uso}{
+\section{Workflow}{
 
 \enumerate{
-\item \code{\link[=diagnosticar]{diagnosticar()}} recebe os dados (arquivos, pastas ou objetos do R) e
-descreve cada um: tipo, camadas, resolução, sistema de coordenadas,
-bandas e sensor, escala dos valores, MDE, séries temporais e
-sobreposição entre raster e vetor. Em seguida chama
-\code{\link[=sugerir_analises]{sugerir_analises()}}.
-\item \code{print()} mostra o diagnóstico, os alertas e a lista de análises
-sugeridas.
-\item \link[=summary.rsguia_diagnostico]{summary()} mostra a justificativa, os
-cuidados e os pacotes de cada análise.
-\item \code{\link[=ver_codigo]{ver_codigo()}} mostra o código de exemplo, pronto para copiar.
-\item \link[=as.data.frame.rsguia_diagnostico]{as.data.frame()} exporta o
-relatório como tabela.
+\item \code{\link[=diagnose]{diagnose()}} takes the data (files, folders or R objects) and describes
+each one: type, layers, resolution, coordinate reference system, bands
+and sensor, value scale, DEM, time series and raster/vector overlap.
+It then calls \code{\link[=suggest_analyses]{suggest_analyses()}}.
+\item \code{print()} shows the diagnosis, the alerts and the list of suggested
+analyses.
+\item \link[=summary.rsguia_diagnosis]{summary()} shows the rationale, caveats
+and packages of each analysis.
+\item \code{\link[=show_code]{show_code()}} prints the example code, ready to copy.
+\item \link[=as.data.frame.rsguia_diagnosis]{as.data.frame()} exports the report
+as a table.
 }
 }
 
-\section{Entradas aceitas}{
+\section{Accepted inputs}{
 
 \itemize{
-\item Rasters: arquivos \code{.tif}, \code{.tiff}, \code{.vrt}, \code{.img}, \code{.jp2}, \code{.nc},
-\code{.grd}, \code{.asc} ou objetos \code{SpatRaster} (terra).
-\item Vetores: arquivos \code{.shp}, \code{.gpkg}, \code{.geojson}, \code{.json}, \code{.kml} ou
-objetos \code{sf}, \code{sfc} e \code{SpatVector}.
-\item Tabelas com coordenadas: arquivos \code{.csv}, \code{.txt}, \code{.tsv} (separados por
-vírgula, ponto e vírgula ou tabulação) ou \code{data.frame}s. Colunas
-reconhecidas: \code{lon}/\code{lat}, \code{long}/\code{lat}, \code{lng}/\code{lat},
-\code{longitude}/\code{latitude}, \code{decimalLongitude}/\code{decimalLatitude} (GBIF),
-\code{x}/\code{y}, \code{easting}/\code{northing}, \code{utm_x}/\code{utm_y}, entre outras.
-\item Pastas: todos os arquivos reconhecidos dentro da pasta.
-\item Várias entradas ao mesmo tempo: \code{diagnosticar(imagem, pontos)}.
+\item Rasters: \code{.tif}, \code{.tiff}, \code{.vrt}, \code{.img}, \code{.jp2}, \code{.nc}, \code{.grd}, \code{.asc}
+files or \code{SpatRaster} objects (terra).
+\item Vectors: \code{.shp}, \code{.gpkg}, \code{.geojson}, \code{.json}, \code{.kml} files or \code{sf},
+\code{sfc} and \code{SpatVector} objects.
+\item Tables with coordinates: \code{.csv}, \code{.txt}, \code{.tsv} files (separated by
+commas, semicolons or tabs) or \code{data.frame}s. Recognized columns:
+\code{lon}/\code{lat}, \code{long}/\code{lat}, \code{lng}/\code{lat}, \code{longitude}/\code{latitude},
+\code{decimalLongitude}/\code{decimalLatitude} (GBIF), \code{x}/\code{y},
+\code{easting}/\code{northing}, \code{utm_x}/\code{utm_y}, among others.
+\item Folders: every recognized file inside the folder.
+\item Several inputs at once: \code{diagnose(image, points)}.
 }
 }
 
-\section{Sensores e bandas reconhecidos}{
+\section{Recognized sensors and bands}{
 
 \itemize{
-\item Sentinel-2: \code{B1}/\code{B01} a \code{B12}, \code{B8A}, \code{SCL}, inclusive dentro de nomes
-de arquivo como \code{..._B04_10m.jp2}.
-\item Landsat 8/9 (Coleção 2): \code{SR_B1} a \code{SR_B7}, \code{ST_B10}, \code{QA_PIXEL} e os
-nomes curtos \code{B1} a \code{B11}.
-\item Landsat 4-7 (Coleção 2): \code{SR_B1} a \code{SR_B5}, \code{SR_B7}, \code{ST_B6}.
-\item Nomes genéricos, em inglês ou português: \code{blue}/\code{azul},
-\code{green}/\code{verde}, \code{red}/\code{vermelho}, \code{rededge}, \code{nir}, \code{swir1}, \code{swir2},
-\code{thermal}, além dos nomes usados em catálogos STAC (\code{nir08}, \code{swir16},
-\code{swir22}...).
+\item Sentinel-2: \code{B1}/\code{B01} to \code{B12}, \code{B8A}, \code{SCL}, also inside file names
+such as \code{..._B04_10m.jp2}.
+\item Landsat 8/9 (Collection 2): \code{SR_B1} to \code{SR_B7}, \code{ST_B10}, \code{QA_PIXEL} and
+the short names \code{B1} to \code{B11}.
+\item Landsat 4-7 (Collection 2): \code{SR_B1} to \code{SR_B5}, \code{SR_B7}, \code{ST_B6}.
+\item Generic names: \code{blue}, \code{green}, \code{red}, \code{rededge}, \code{nir}, \code{swir1},
+\code{swir2}, \code{thermal}, the names used in STAC catalogs (\code{nir08}, \code{swir16},
+\code{swir22}, ...) and their Portuguese equivalents (\code{azul}, \code{verde},
+\code{vermelho}, ...).
 }
 
-A correspondência fica em \code{system.file("regras", "bandas.csv", package = "rsguia")}. Quando os nomes servem para mais de um sensor, o pacote avisa;
-informe o sensor com \code{diagnosticar(x, sensor = "landsat89")}.
+The aliases are listed in \code{system.file("rules", "bands.csv", package = "rsguia")}. When the names match more than one sensor, the package warns
+you; set the sensor with \code{diagnose(x, sensor = "landsat89")}.
 }
 
-\section{Opções}{
+\section{Options}{
 
 \itemize{
-\item \code{rsguia.min_bandas_multiespectral} (padrão 4): número mínimo de bandas
-espectrais para considerar o dado multiespectral.
-\item \code{rsguia.min_datas_serie_longa} (padrão 10): número mínimo de datas para
-sugerir análise de tendência.
-\item \code{rsguia.tamanho_amostra} (padrão 100000): número de células lidas para
-estimar as estatísticas de rasters grandes.
+\item \code{rsguia.min_multispectral_bands} (default 4): minimum number of
+spectral bands for the data to be considered multispectral.
+\item \code{rsguia.min_dates_long_series} (default 10): minimum number of dates to
+suggest trend analysis.
+\item \code{rsguia.sample_size} (default 100000): number of cells read to estimate
+statistics of large rasters.
 }
 }
 
-\section{Para saber mais}{
+\section{Learn more}{
 
 \itemize{
-\item \code{vignette("estudo-de-caso-jurua", package = "rsguia")}: estudo de caso
-com imagens Sentinel-2 do rio Juruá (AC).
-\item \code{vignette("criando-regras", package = "rsguia")}: como acrescentar
-análises novas à tabela de regras.
-\item \code{\link[=regras_rsguia]{regras_rsguia()}}: a tabela de regras e as etiquetas disponíveis.
-\item \link{dados_jurua}: os dados de exemplo.
+\item \code{vignette("case-study-jurua", package = "rsguia")}: case study with
+Sentinel-2 images of the Jurua River (Acre, Brazil).
+\item \code{vignette("custom-rules", package = "rsguia")}: how to add new analyses
+to the rules table.
+\item \code{\link[=rsguia_rules]{rsguia_rules()}}: the rules table and the available tags.
+\item \link{jurua_data}: the example data.
 }
 }
 

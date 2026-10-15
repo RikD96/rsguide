@@ -1,71 +1,69 @@
-# Funções auxiliares internas -------------------------------------------------
+# Internal helpers ------------------------------------------------------------
 
 `%||%` <- function(a, b) if (is.null(a)) b else a
 
-# Lê uma opção do pacote (ex.: options(rsguia.min_datas_serie_longa = 12))
-opcao <- function(nome, padrao) getOption(paste0("rsguia.", nome), padrao)
+# Reads a package option (e.g. options(rsguia.min_dates_long_series = 12))
+get_option <- function(name, default) getOption(paste0("rsguia.", name), default)
 
-# Lê uma tabela de inst/regras/
-ler_tabela_interna <- function(arquivo) {
-  caminho <- system.file("regras", arquivo, package = "rsguia", mustWork = TRUE)
-  utils::read.csv(caminho, stringsAsFactors = FALSE, fileEncoding = "UTF-8",
+# Reads a table from inst/rules/
+read_internal_table <- function(file) {
+  path <- system.file("rules", file, package = "rsguia", mustWork = TRUE)
+  utils::read.csv(path, stringsAsFactors = FALSE, fileEncoding = "UTF-8",
                   na.strings = c("", "NA"))
 }
 
-extensao_arquivo <- function(caminho) {
-  b <- basename(caminho)
+file_ext <- function(path) {
+  b <- basename(path)
   ifelse(grepl("\\.[^.]+$", b), tolower(sub(".*\\.", "", b)), "")
 }
 
-sem_extensao <- function(caminho) sub("\\.[^.]+$", "", basename(caminho))
+strip_ext <- function(path) sub("\\.[^.]+$", "", basename(path))
 
-# Alertas são guardados como data.frame (item, nivel, mensagem)
-alerta <- function(item, mensagem, nivel = "aviso") {
-  data.frame(item = item, nivel = nivel, mensagem = mensagem,
-             stringsAsFactors = FALSE)
+# Alerts are stored as a data.frame (item, level, message)
+alert <- function(item, message, level = "warning") {
+  data.frame(item = item, level = level, message = message, stringsAsFactors = FALSE)
 }
 
-juntar_alertas <- function(lista) {
-  lista <- Filter(function(x) !is.null(x) && nrow(x) > 0, lista)
-  if (!length(lista)) {
-    return(data.frame(item = character(), nivel = character(),
-                      mensagem = character(), stringsAsFactors = FALSE))
+bind_alerts <- function(alerts) {
+  alerts <- Filter(function(x) !is.null(x) && nrow(x) > 0, alerts)
+  if (!length(alerts)) {
+    return(data.frame(item = character(), level = character(), message = character(),
+                      stringsAsFactors = FALSE))
   }
-  do.call(rbind, lista)
+  do.call(rbind, alerts)
 }
 
-# Sistema de coordenadas ------------------------------------------------------
+# Coordinate reference systems ------------------------------------------------
 
-crs_de_raster <- function(r) {
+raster_crs <- function(r) {
   wkt <- terra::crs(r)
   if (!nzchar(wkt)) sf::NA_crs_ else sf::st_crs(wkt)
 }
 
-descrever_crs <- function(crs) {
+describe_crs <- function(crs) {
   if (is.na(crs)) {
-    return(list(definido = FALSE, nome = NA_character_, epsg = NA_integer_,
+    return(list(defined = FALSE, name = NA_character_, epsg = NA_integer_,
                 lonlat = NA, wkt = NA_character_))
   }
-  list(definido = TRUE,
-       nome = crs$Name %||% NA_character_,
+  list(defined = TRUE,
+       name = crs$Name %||% NA_character_,
        epsg = crs$epsg %||% NA_integer_,
        lonlat = isTRUE(sf::st_is_longlat(crs)),
        wkt = crs$wkt)
 }
 
-mesmo_crs <- function(a, b) {
-  if (!a$definido || !b$definido) return(NA)
+same_crs <- function(a, b) {
+  if (!a$defined || !b$defined) return(NA)
   sf::st_crs(a$wkt) == sf::st_crs(b$wkt)
 }
 
-texto_crs <- function(crs) {
-  if (!crs$definido) return("n\u00e3o definido")
-  if (is.na(crs$epsg)) crs$nome else sprintf("%s (EPSG:%s)", crs$nome, crs$epsg)
+crs_text <- function(crs) {
+  if (!crs$defined) return("not defined")
+  if (is.na(crs$epsg)) crs$name else sprintf("%s (EPSG:%s)", crs$name, crs$epsg)
 }
 
-# Formatação de números no padrão brasileiro
-fmt_num <- function(x, digitos = 0) {
-  formatC(x, format = "f", digits = digitos, big.mark = ".", decimal.mark = ",")
+fmt_num <- function(x, digits = 0) {
+  formatC(x, format = "f", digits = digits, big.mark = ",")
 }
 
-fmt_pct <- function(x, digitos = 0) paste0(fmt_num(100 * x, digitos), "%")
+fmt_pct <- function(x, digits = 0) paste0(fmt_num(100 * x, digits), "%")
