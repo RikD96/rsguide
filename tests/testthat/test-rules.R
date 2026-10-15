@@ -42,8 +42,8 @@ test_that("suggestions for a DEM", {
 test_that("raster + points suggests extraction without repeating the indices", {
   d <- diagnose(fake_raster(), fake_points())
   s <- d$suggestions
-  expect_equal(s$context[s$id == "point_extraction"], "C1+T1")
-  expect_equal(s$context[s$id == "ndvi"], "C1")
+  expect_equal(s$context[s$id == "point_extraction"], "SC1+T1")
+  expect_equal(s$context[s$id == "ndvi"], "SC1")
   expect_false("zonal_stats" %in% s$id)
 })
 
@@ -68,7 +68,7 @@ test_that("a class map suggests landscape metrics", {
 test_that("labeled points suggest classification with the user's samples", {
   d <- diagnose(fake_raster(), fake_points())
   s <- d$suggestions
-  expect_equal(s$context[s$id == "supervised_class_samples"], "C1+T1")
+  expect_equal(s$context[s$id == "supervised_class_samples"], "SC1+T1")
   expect_match(s$code[s$id == "supervised_class_samples"], "samples[[\"species\"]]", fixed = TRUE)
 
   unlabeled <- fake_points()[, c("lon", "lat")]
