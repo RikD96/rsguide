@@ -5,7 +5,8 @@
 #' os pacotes R recomendados. Use esta função para consultar as regras ou
 #' como ponto de partida para criar as suas.
 #'
-#' @param arquivo Opcional. Caminho de um CSV (UTF-8) com regras próprias.
+#' @param arquivo Opcional. Caminho de um CSV com regras próprias, separado
+#'   por vírgula ou ponto e vírgula, em UTF-8 ou latin1 (como o Excel salva).
 #'   Se omitido, usa a tabela que acompanha o pacote
 #'   (`system.file("regras", "regras.csv", package = "rsguia")`).
 #'
@@ -50,8 +51,7 @@ regras_rsguia <- function(arquivo = NULL) {
   regras <- if (is.null(arquivo)) {
     ler_tabela_interna("regras.csv")
   } else {
-    utils::read.csv(arquivo, stringsAsFactors = FALSE, fileEncoding = "UTF-8",
-                    na.strings = c("", "NA"))
+    ler_csv(arquivo, na = c("", "NA"))
   }
   validar_regras(regras)
 }

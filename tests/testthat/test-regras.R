@@ -127,3 +127,26 @@ test_that("pontos com classes sugerem classificação com as amostras do usuári
   sem_classes <- pontos_falsos()[, c("lon", "lat")]
   expect_false("class_sup_amostras" %in% diagnosticar(raster_falso(), sem_classes)$sugestoes$id)
 })
+
+test_that("regras em CSV do Excel (ponto e vírgula, latin1) são lidas", {
+  arq <- tempfile(fileext = ".csv")
+  on.exit(unlink(arq))
+  regras <- regras_rsguia()[1:2, ]
+  con <- file(arq, open = "w", encoding = "latin1")
+  utils::write.table(regras, con, sep = ";", row.names = FALSE, qmethod = "double")
+  close(con)
+  lidas <- regras_rsguia(arq)
+  expect_equal(lidas$analise, regras$analise)
+  expect_equal(lidas$cuidados, regras$cuidados)
+})
+
+test_that("regra própria com modelo de código próprio", {
+  modelo <- tempfile(fileext = ".R")
+  on.exit(unlink(modelo))
+  writeLines(c("{carregar_raster:img}", "{escala}", "gndvi <- (img[[\"{nir}\"]] - img[[\"{green}\"]]) / (img[[\"{nir}\"]] + img[[\"{green}\"]])"), modelo)
+  nova <- data.frame(id = "gndvi", analise = "GNDVI", categoria = "Teste",
+                     condicao = "banda:green & banda:nir", justificativa = "j",
+                     cuidados = "a", pacotes = "terra", exemplo = modelo)
+  d <- diagnosticar(raster_falso(), regras = nova)
+  expect_match(d$sugestoes$codigo, "img[[\"B8\"]] - img[[\"B3\"]]", fixed = TRUE)
+})

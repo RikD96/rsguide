@@ -75,13 +75,16 @@ ler_caminho <- function(caminho) {
 }
 
 # Lê CSV com vírgula ou ponto e vírgula como separador
-ler_csv <- function(caminho) {
-  cabecalho <- readLines(caminho, n = 1, warn = FALSE)
+# Aceita UTF-8 ou latin1 (CSV salvo pelo Excel no Windows)
+ler_csv <- function(caminho, na = "NA") {
+  codificacao <- if (all(validUTF8(readLines(caminho, warn = FALSE)))) "UTF-8" else "latin1"
+  cabecalho <- readLines(caminho, n = 1, warn = FALSE, encoding = codificacao)
   contagem <- vapply(c(",", ";", "\t"), function(s) lengths(regmatches(cabecalho, gregexpr(s, cabecalho, fixed = TRUE))), numeric(1))
   sep <- names(which.max(contagem))
   df <- utils::read.table(caminho, header = TRUE, sep = sep, dec = if (sep == ";") "," else ".",
                           quote = "\"", stringsAsFactors = FALSE, check.names = FALSE,
-                          comment.char = "", fill = TRUE)
+                          comment.char = "", fill = TRUE, fileEncoding = codificacao,
+                          na.strings = na)
   attr(df, "rsguia_sep") <- sep
   df
 }

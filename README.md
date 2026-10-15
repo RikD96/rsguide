@@ -61,8 +61,12 @@ minhas_regras <- rbind(regras_rsguia(), nova_regra)
 diagnosticar(pasta, regras = minhas_regras)
 ```
 
-## Estudo de caso
+## Documentação
 
-A vignette `vignette("estudo-de-caso-jurua", package = "rsguia")` mostra o
-diagnóstico de imagens Sentinel-2 do rio Juruá, perto de Cruzeiro do Sul
-(AC), do arquivo isolado à pasta com série temporal, MDE e parcelas de campo.
+* `?rsguia`: visão geral do pacote, entradas aceitas e sensores reconhecidos.
+* `vignette("estudo-de-caso-jurua", package = "rsguia")`: diagnóstico de
+  imagens Sentinel-2 do rio Juruá, perto de Cruzeiro do Sul (AC), do arquivo
+  isolado à pasta com série temporal, MDE e parcelas de campo.
+* `vignette("criando-regras", package = "rsguia")`: como acrescentar
+  análises novas, escrever condições e modelos de código.
+* `?dados_jurua`: os dados de exemplo e suas fontes.

@@ -4,3 +4,5 @@
 *.Rcheck/
 rsguia_*.tar.gz
 inst/doc
+docs
+manual/

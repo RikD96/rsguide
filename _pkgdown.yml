@@ -1,0 +1,40 @@
+url: ~
+lang: pt
+template:
+  bootstrap: 5
+
+navbar:
+  structure:
+    left: [intro, reference, articles, news]
+    right: [search]
+
+reference:
+  - title: Diagnóstico e sugestões
+    desc: Ponto de partida. Entregue os dados e receba o diagnóstico com as análises possíveis.
+    contents:
+      - diagnosticar
+      - sugerir_analises
+  - title: Lendo e exportando os resultados
+    contents:
+      - ver_codigo
+      - resumo
+  - title: Regras de recomendação
+    desc: A tabela que decide o que sugerir, e que você pode ampliar.
+    contents:
+      - regras_rsguia
+  - title: Dados de exemplo
+    contents:
+      - dados_jurua
+  - title: Sobre o pacote
+    contents:
+      - rsguia-package
+
+articles:
+  - title: Guias
+    navbar: ~
+    contents:
+      - estudo-de-caso-jurua
+      - criando-regras
+
+news:
+  cran_dates: false
