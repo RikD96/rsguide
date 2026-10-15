@@ -6,3 +6,4 @@ rsguia_*.tar.gz
 inst/doc
 docs
 manual/
+tests/testthat/_problems/
