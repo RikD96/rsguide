@@ -13,3 +13,4 @@
 * Etapa 3: `print()` com lista curta de sugestões, `summary()` com
   justificativas, cuidados e código (`codigo = TRUE`) e `as.data.frame()` para
   exportar sugestões, itens ou alertas.
+* Etapa 4: vignette "Estudo de caso: Vale do Juruá (Acre)" e README.

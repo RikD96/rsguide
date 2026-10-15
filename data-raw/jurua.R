@@ -15,7 +15,7 @@
 # Requer: terra, sf, jsonlite e conexão com a internet.
 
 stac <- "https://earth-search.aws.element84.com/v1/search"
-centro <- c(lon = -72.70, lat = -7.62)   # rio Juruá, cidade e floresta
+centro <- c(lon = -72.654, lat = -7.649)  # meandro do rio Juruá, várzea e floresta
 meia_largura <- 1250                     # metros -> recorte de 2,5 x 2,5 km
 anos <- c(2019, 2024)
 meses <- c("07-01", "08-31")             # estação seca: menos nuvens
