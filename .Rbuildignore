@@ -1,3 +1,4 @@
 ^LICENSE\.md$
 ^\.git$
 ^\.gitignore$
+^data-raw$

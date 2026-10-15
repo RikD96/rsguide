@@ -4,3 +4,7 @@
   coordenadas; reconhece bandas e sensor (Sentinel-2, Landsat 4-9, nomes
   genéricos), escala dos valores, MDE, séries temporais e sobreposição
   raster × vetor.
+* Etapa 2: `sugerir_analises()`, `regras_rsguia()` e `ver_codigo()`. Regras em
+  `inst/regras/regras.csv` (17 análises, incluindo NDRE e NDMI) e modelos de
+  código em `inst/exemplos/`, preenchidos com os arquivos e bandas do usuário.
+* Dados de exemplo do Vale do Juruá em `inst/extdata/` (script em `data-raw/`).

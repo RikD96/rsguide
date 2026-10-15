@@ -17,6 +17,10 @@
 #' @param crs_tabela Opcional. CRS das coordenadas de tabelas (código EPSG ou
 #'   texto aceito por [sf::st_crs()]). Se omitido, graus decimais são
 #'   tratados como WGS 84 (EPSG:4326).
+#' @param sugerir Se `TRUE` (padrão), já sugere as análises possíveis com
+#'   [sugerir_analises()].
+#' @param regras Opcional. Regras próprias (`data.frame` ou caminho de CSV)
+#'   repassadas a [sugerir_analises()]; veja [regras_rsguia()].
 #'
 #' @details
 #' Rasters grandes não são lidos por inteiro: as estatísticas são estimadas a
@@ -32,7 +36,7 @@
 #' @return Um objeto da classe `rsguia_diagnostico`, uma lista com os
 #'   elementos `itens` (diagnóstico de cada dado), `cenas`, `series`,
 #'   `sobreposicoes`, `contextos` (conjuntos de etiquetas usados pelas regras
-#'   de recomendação) e `alertas`.
+#'   de recomendação), `alertas` e, se `sugerir = TRUE`, `sugestoes`.
 #'
 #' @examples
 #' r <- terra::rast(nrows = 20, ncols = 20, nlyrs = 4, crs = "EPSG:32718",
@@ -42,7 +46,8 @@
 #' diagnosticar(r)
 #'
 #' @export
-diagnosticar <- function(..., sensor = NULL, crs_tabela = NULL) {
+diagnosticar <- function(..., sensor = NULL, crs_tabela = NULL, sugerir = TRUE,
+                         regras = NULL) {
   entradas <- list(...)
   if (!length(entradas)) {
     cli::cli_abort("Informe ao menos um dado para diagnosticar.")
@@ -61,6 +66,10 @@ diagnosticar <- function(..., sensor = NULL, crs_tabela = NULL) {
       vetor = diagnosticar_vetor(b$objeto, b$nome, id),
       tabela = diagnosticar_tabela(b$objeto, b$nome, id, crs_tabela = crs_tabela)
     )
+    if (b$tipo != "raster") {
+      itens[[id]]$fonte <- b$fonte %||% NA_character_
+      itens[[id]]$sep <- b$sep
+    }
   }
 
   rasters <- Filter(function(i) i$tipo == "raster", itens)
@@ -82,9 +91,10 @@ diagnosticar <- function(..., sensor = NULL, crs_tabela = NULL) {
     list(alertas_sem_data(cenas)),
     alertas_sob
   ))
+  alertas <- alertas[!duplicated(alertas[c("item", "mensagem")]), , drop = FALSE]
   rownames(alertas) <- NULL
 
-  structure(
+  diag <- structure(
     list(
       itens = itens,
       cenas = cenas,
@@ -97,6 +107,8 @@ diagnosticar <- function(..., sensor = NULL, crs_tabela = NULL) {
     ),
     class = "rsguia_diagnostico"
   )
+  if (sugerir) diag <- sugerir_analises(diag, regras)
+  diag
 }
 
 nomes_das_entradas <- function(entradas, expressoes) {
@@ -120,7 +132,7 @@ construir_contextos <- function(cenas, series, vetores, sobreposicoes) {
     ctx[[s$id]] <- novo(s$id, sprintf("s\u00e9rie temporal com %d datas", s$n_datas), s$itens, s$tags)
   }
   for (vt in vetores) {
-    tags <- c("vetor", paste0("vetor:", vt$geometrias))
+    tags <- c("vetor", sprintf("vetor:%s", vt$geometrias))
     if (vt$tipo == "tabela") tags <- c(tags, "tabela")
     if (length(vt$colunas_rotulo)) tags <- c(tags, "vetor:rotulado")
     ctx[[vt$id]] <- novo(vt$id, sprintf("'%s'", vt$nome), vt$id, tags)

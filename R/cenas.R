@@ -60,7 +60,7 @@ agrupar_cenas <- function(rasters) {
 
 finalizar_cena <- function(itens, id) {
   bandas <- do.call(rbind, lapply(itens, function(i) cbind(item = i$id, i$bandas)))
-  grupos <- unique(stats::na.omit(bandas$grupo))
+  grupos <- unique(bandas$grupo[!is.na(bandas$grupo)])
   n_espectrais <- sum(bandas$grupo %in% GRUPOS_REFLETIVOS)
   limiar <- opcao("min_bandas_multiespectral", 4)
   datas <- sort(unique(do.call(c, lapply(itens, function(i) i$datas_unicas))))
@@ -78,8 +78,8 @@ finalizar_cena <- function(itens, id) {
       itens[[1]]$n_camadas), "info")
   }
 
-  tags <- c("raster", paste0("banda:", setdiff(grupos, "outro")),
-            paste0("escala:", escalas))
+  tags <- c("raster", sprintf("banda:%s", setdiff(grupos, "outro")),
+            sprintf("escala:%s", escalas))
   if (multiespectral) tags <- c(tags, "multiespectral")
   if (length(itens) == 1 && itens[[1]]$mde$mde) tags <- c(tags, "mde")
   if (length(datas) >= 2) {
@@ -118,7 +118,7 @@ finalizar_cena <- function(itens, id) {
 
 agrupar_series <- function(cenas) {
   datadas <- Filter(function(cn) length(cn$datas) == 1, cenas)
-  sem_data <- Filter(function(cn) length(cn$datas) == 0, cenas)
+  sem_data <- Filter(function(cn) length(cn$datas) == 0 && any(cn$bandas$grupo %in% GRUPOS_REFLETIVOS), cenas)
   grupos <- list()
   for (cn in datadas) {
     alvo <- NA
@@ -171,7 +171,7 @@ agrupar_series <- function(cenas) {
 
 # Várias imagens da mesma área sem data: pode ser uma série não reconhecida
 alertas_sem_data <- function(cenas) {
-  sem_data <- Filter(function(cn) length(cn$datas) == 0, cenas)
+  sem_data <- Filter(function(cn) length(cn$datas) == 0 && any(cn$bandas$grupo %in% GRUPOS_REFLETIVOS), cenas)
   if (length(sem_data) < 2) return(NULL)
   for (i in seq_along(sem_data)) {
     for (j in seq_along(sem_data)) {
@@ -212,7 +212,7 @@ alertas_sobreposicao <- function(s, cenas, vetores) {
   alvo <- paste(s$vetor, "x", s$cena)
   a <- list()
   if (isFALSE(s$crs_igual)) {
-    a[[length(a) + 1]] <- alerta(alvo, sprintf(
+    a[[length(a) + 1]] <- alerta(vt$id, sprintf(
       "CRS diferentes (raster: %s; vetor: %s). O rsguia reprojetou s\u00f3 para verificar a sobreposi\u00e7\u00e3o; antes de analisar, reprojete o vetor: sf::st_transform(v, terra::crs(r)).",
       texto_crs(cn$crs), texto_crs(vt$crs)))
   }
