@@ -69,7 +69,7 @@ read_path <- function(path) {
   if (ext %in% EXT_TABLE) {
     df <- read_csv_any(path)
     return(list(list(type = "table", object = df, name = name, source = path,
-                     sep = attr(df, "rsguia_sep"))))
+                     sep = attr(df, "rsguide_sep"))))
   }
   cli::cli_abort("Unrecognized file format: {.path {path}}")
 }
@@ -87,6 +87,6 @@ read_csv_any <- function(path, na = "NA") {
                           quote = "\"", stringsAsFactors = FALSE, check.names = FALSE,
                           comment.char = "", fill = TRUE, fileEncoding = encoding,
                           na.strings = na)
-  attr(df, "rsguia_sep") <- sep
+  attr(df, "rsguide_sep") <- sep
   df
 }

@@ -34,7 +34,7 @@ state of Acre, Brazil (approximate center: 7.649 S, 72.654 W). They are
 not R objects: they are files, accessed with \code{\link[=system.file]{system.file()}}.
 }
 \examples{
-folder <- system.file("extdata", package = "rsguia")
+folder <- system.file("extdata", package = "rsguide")
 list.files(folder)
 
 img <- terra::rast(file.path(folder, "jurua_s2_20240814.tif"))

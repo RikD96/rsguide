@@ -14,9 +14,9 @@
 read_template <- function(rule) {
   if ("template" %in% names(rule) && !is.na(rule$template) && nzchar(rule$template)) {
     file <- rule$template
-    if (!file.exists(file)) file <- system.file("templates", file, package = "rsguia")
+    if (!file.exists(file)) file <- system.file("templates", file, package = "rsguide")
   } else {
-    file <- system.file("templates", paste0(rule$id, ".R"), package = "rsguia")
+    file <- system.file("templates", paste0(rule$id, ".R"), package = "rsguide")
   }
   if (!nzchar(file) || !file.exists(file)) return(NA_character_)
   paste(readLines(file, encoding = "UTF-8", warn = FALSE), collapse = "\n")

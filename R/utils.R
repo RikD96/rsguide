@@ -2,12 +2,12 @@
 
 `%||%` <- function(a, b) if (is.null(a)) b else a
 
-# Reads a package option (e.g. options(rsguia.min_dates_long_series = 12))
-get_option <- function(name, default) getOption(paste0("rsguia.", name), default)
+# Reads a package option (e.g. options(rsguide.min_dates_long_series = 12))
+get_option <- function(name, default) getOption(paste0("rsguide.", name), default)
 
 # Reads a table from inst/rules/
 read_internal_table <- function(file) {
-  path <- system.file("rules", file, package = "rsguia", mustWork = TRUE)
+  path <- system.file("rules", file, package = "rsguide", mustWork = TRUE)
   utils::read.csv(path, stringsAsFactors = FALSE, fileEncoding = "UTF-8",
                   na.strings = c("", "NA"))
 }

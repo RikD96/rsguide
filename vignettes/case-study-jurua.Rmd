@@ -19,19 +19,19 @@ knitr::opts_chunk$set(
 old_options <- options(width = 90, cli.num_colors = 1)
 ```
 
-Got a satellite image file and don't know where to start? **rsguia** looks
+Got a satellite image file and don't know where to start? **rsguide** looks
 at your data, works out what it is and suggests which analyses are possible,
 explaining in plain language why each one makes sense, what to watch out for
 and how to do it in R.
 
-rsguia **does not run** the analyses: it diagnoses and recommends. The
+rsguide **does not run** the analyses: it diagnoses and recommends. The
 decision (and the interpretation) is still yours.
 
 This case study uses real data from the Jurua River, near the town of
 Cruzeiro do Sul, in the state of Acre, Brazil.
 
 ```{r setup}
-library(rsguia)
+library(rsguide)
 ```
 
 ## The data
@@ -39,7 +39,7 @@ library(rsguia)
 The package ships four example files in `inst/extdata`:
 
 ```{r}
-folder <- system.file("extdata", package = "rsguia")
+folder <- system.file("extdata", package = "rsguide")
 list.files(folder)
 ```
 
@@ -66,7 +66,7 @@ d <- diagnose(img)
 d
 ```
 
-Note what rsguia worked out on its own:
+Note what rsguide worked out on its own:
 
 * **Sensor:** from the band names (`B02`, `B03`, ..., `B12`), the image is
   from Sentinel-2. Each band was matched to its spectral region (blue,
@@ -118,7 +118,7 @@ dd <- diagnose(folder)
 dd
 ```
 
-Now rsguia:
+Now rsguide:
 
 * identified the **time series** (the dates are in the file names) and
   suggested change detection;
@@ -140,7 +140,7 @@ knitr::kable(unique(report[, c("analysis", "category", "packages")]), row.names 
 ```
 
 ```{r, eval = FALSE}
-utils::write.csv(report, "rsguia_report.csv", row.names = FALSE)
+utils::write.csv(report, "rsguide_report.csv", row.names = FALSE)
 ```
 
 You can also export the description of each file:
@@ -177,7 +177,7 @@ date.
 The recommendations come from an editable table. To see it:
 
 ```{r}
-rules <- rsguia_rules()
+rules <- rsguide_rules()
 knitr::kable(rules[, c("id", "condition")])
 ```
 
@@ -211,12 +211,12 @@ Some thresholds can also be changed. Trend analysis, for example, is only
 suggested with 10 or more dates; to change that:
 
 ```{r, eval = FALSE}
-options(rsguia.min_dates_long_series = 6)
+options(rsguide.min_dates_long_series = 6)
 ```
 
 ## Limitations
 
-* rsguia recognizes the sensor from the **names** of the bands and files.
+* rsguide recognizes the sensor from the **names** of the bands and files.
   If the bands have generic names (`lyr.1`, `band_1`), rename them
   (`names(r) <- c("blue", "green", "red", "nir")`) or set the sensor:
   `diagnose(x, sensor = "sentinel2")`.

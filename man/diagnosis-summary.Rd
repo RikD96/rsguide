@@ -2,13 +2,13 @@
 % Please edit documentation in R/summary.R
 \name{diagnosis-summary}
 \alias{diagnosis-summary}
-\alias{summary.rsguia_diagnosis}
-\alias{as.data.frame.rsguia_diagnosis}
+\alias{summary.rsguide_diagnosis}
+\alias{as.data.frame.rsguide_diagnosis}
 \title{Summarize and export a diagnosis}
 \usage{
-\method{summary}{rsguia_diagnosis}(object, code = FALSE, ...)
+\method{summary}{rsguide_diagnosis}(object, code = FALSE, ...)
 
-\method{as.data.frame}{rsguia_diagnosis}(
+\method{as.data.frame}{rsguide_diagnosis}(
   x,
   row.names = NULL,
   optional = FALSE,
@@ -17,7 +17,7 @@
 )
 }
 \arguments{
-\item{object, x}{An object of class \code{rsguia_diagnosis}, created by
+\item{object, x}{An object of class \code{rsguide_diagnosis}, created by
 \code{\link[=diagnose]{diagnose()}}.}
 
 \item{code}{If \code{TRUE}, includes the example code of each analysis.}
@@ -32,7 +32,7 @@ and dataset), \code{"items"} (one row per diagnosed dataset) or \code{"alerts"}.
 }
 \value{
 \code{summary()} returns an object of class
-\code{summary.rsguia_diagnosis}; \code{as.data.frame()} returns a \code{data.frame}.
+\code{summary.rsguide_diagnosis}; \code{as.data.frame()} returns a \code{data.frame}.
 }
 \description{
 \code{summary()} shows an overview of the data and the full list of suggested

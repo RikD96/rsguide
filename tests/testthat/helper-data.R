@@ -59,7 +59,7 @@ fake_class_map <- function() {
 
 # Writes rasters to a temporary folder and returns the folder path
 folder_with_rasters <- function(rasters) {
-  folder <- tempfile("rsguia_")
+  folder <- tempfile("rsguide_")
   dir.create(folder)
   for (nm in names(rasters)) {
     terra::writeRaster(rasters[[nm]], file.path(folder, paste0(nm, ".tif")))

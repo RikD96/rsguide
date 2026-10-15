@@ -7,15 +7,15 @@ test_that("conditions with &, | and ! are evaluated", {
 })
 
 test_that("the package rules table is valid and every rule has a template", {
-  rules <- rsguia_rules()
+  rules <- rsguide_rules()
   expect_true(all(RULE_COLUMNS %in% names(rules)))
   expect_false(anyDuplicated(rules$id) > 0)
-  templates <- system.file("templates", paste0(rules$id, ".R"), package = "rsguia")
+  templates <- system.file("templates", paste0(rules$id, ".R"), package = "rsguide")
   expect_true(all(nzchar(templates)))
 })
 
 test_that("problems in the rules are reported", {
-  rules <- rsguia_rules()
+  rules <- rsguide_rules()
   expect_error(validate_rules(rules[, -1]), "Columns missing")
   expect_error(validate_rules(rbind(rules, rules[1, ])), "Duplicated ids")
   bad <- rules[1, ]
@@ -104,12 +104,12 @@ test_that("custom rule with its own template", {
 test_that("rules saved by Excel (semicolon, latin1) are read", {
   file <- tempfile(fileext = ".csv")
   on.exit(unlink(file))
-  rules <- rsguia_rules()[1:2, ]
+  rules <- rsguide_rules()[1:2, ]
   rules$analysis[1] <- "Índice de vegetação"
   con <- file(file, open = "w", encoding = "latin1")
   utils::write.table(rules, con, sep = ";", row.names = FALSE, qmethod = "double")
   close(con)
-  read_back <- rsguia_rules(file)
+  read_back <- rsguide_rules(file)
   expect_equal(read_back$analysis, rules$analysis)
   expect_equal(read_back$caveats, rules$caveats)
 })
@@ -123,7 +123,7 @@ test_that("show_code prints the code and checks the id", {
 })
 
 test_that("the generated code for every suggestion runs without errors", {
-  folder <- tempfile("rsguia_")
+  folder <- tempfile("rsguide_")
   dir.create(folder)
   on.exit(unlink(folder, recursive = TRUE))
   r <- fake_raster(c("B2", "B3", "B4", "B5", "B8", "B11", "B12"))
@@ -134,7 +134,7 @@ test_that("the generated code for every suggestion runs without errors", {
   sf::st_write(fake_polygons(), file.path(folder, "fields.gpkg"), quiet = TRUE)
   terra::writeRaster(fake_class_map(), file.path(folder, "mapbiomas.tif"), datatype = "INT1U")
 
-  old <- options(rsguia.min_dates_long_series = 2)
+  old <- options(rsguide.min_dates_long_series = 2)
   on.exit(options(old), add = TRUE)
   d <- diagnose(folder)
   s <- d$suggestions

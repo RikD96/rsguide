@@ -8,7 +8,7 @@
 #' @param file Optional. Path to a CSV file with custom rules, separated by
 #'   commas or semicolons, encoded in UTF-8 or latin1 (as saved by Excel).
 #'   If omitted, the table shipped with the package is used
-#'   (`system.file("rules", "rules.csv", package = "rsguia")`).
+#'   (`system.file("rules", "rules.csv", package = "rsguide")`).
 #'
 #' @details
 #' Required columns:
@@ -35,7 +35,7 @@
 #' @return A `data.frame` with the rules.
 #'
 #' @examples
-#' rules <- rsguia_rules()
+#' rules <- rsguide_rules()
 #' rules[, c("id", "analysis", "condition")]
 #'
 #' # Adding a custom rule
@@ -48,7 +48,7 @@
 #' my_rules <- rbind(rules, gndvi)
 #'
 #' @export
-rsguia_rules <- function(file = NULL) {
+rsguide_rules <- function(file = NULL) {
   rules <- if (is.null(file)) {
     read_internal_table("rules.csv")
   } else {
@@ -61,7 +61,7 @@ RULE_COLUMNS <- c("id", "analysis", "category", "condition", "rationale", "cavea
                   "packages")
 
 validate_rules <- function(rules) {
-  if (is.character(rules)) rules <- rsguia_rules(rules)
+  if (is.character(rules)) rules <- rsguide_rules(rules)
   if (!is.data.frame(rules)) {
     cli::cli_abort("Rules must be a data.frame or the path to a CSV file.")
   }
@@ -82,7 +82,7 @@ validate_rules <- function(rules) {
   if (length(unknown)) {
     cli::cli_warn(c(
       "Unknown tags in the conditions: {.val {unknown}}.",
-      "i" = "These rules will never be suggested. See the valid tags in {.code ?rsguia_rules}."
+      "i" = "These rules will never be suggested. See the valid tags in {.code ?rsguide_rules}."
     ))
   }
   rules
@@ -119,7 +119,7 @@ eval_condition <- function(condition, tags) {
 #' Suggest analyses from a diagnosis
 #'
 #' Matches the characteristics found by [diagnose()] against the rules table
-#' ([rsguia_rules()]) and lists the possible analyses, each with a rationale,
+#' ([rsguide_rules()]) and lists the possible analyses, each with a rationale,
 #' caveats, suggested packages and an example code snippet already filled in
 #' with your file and band names. The analyses are not run.
 #'
@@ -127,9 +127,9 @@ eval_condition <- function(condition, tags) {
 #' (argument `suggest = TRUE`). Use it to redo the suggestions with other
 #' rules.
 #'
-#' @param diagnosis An object of class `rsguia_diagnosis`.
+#' @param diagnosis An object of class `rsguide_diagnosis`.
 #' @param rules Optional. A `data.frame` of rules or the path to a CSV file;
-#'   see [rsguia_rules()].
+#'   see [rsguide_rules()].
 #'
 #' @return The same diagnosis, with the element `suggestions` (a
 #'   `data.frame` with one row per analysis and dataset it applies to).
@@ -146,7 +146,7 @@ eval_condition <- function(condition, tags) {
 #' @export
 suggest_analyses <- function(diagnosis, rules = NULL) {
   check_diagnosis(diagnosis)
-  rules <- if (is.null(rules)) rsguia_rules() else validate_rules(rules)
+  rules <- if (is.null(rules)) rsguide_rules() else validate_rules(rules)
   ctx <- diagnosis$contexts
 
   rows <- list()
@@ -188,7 +188,7 @@ suggest_analyses <- function(diagnosis, rules = NULL) {
 #' Prints the example code of one or more suggested analyses, already filled
 #' in with your file and band names, ready to copy.
 #'
-#' @param diagnosis An object of class `rsguia_diagnosis`.
+#' @param diagnosis An object of class `rsguide_diagnosis`.
 #' @param analysis Id of the analysis (e.g. `"ndvi"`, column `id` of
 #'   `diagnosis$suggestions`). If omitted, shows all of them.
 #'
@@ -227,7 +227,7 @@ show_code <- function(diagnosis, analysis = NULL) {
 }
 
 check_diagnosis <- function(x) {
-  if (!inherits(x, "rsguia_diagnosis")) {
+  if (!inherits(x, "rsguide_diagnosis")) {
     cli::cli_abort("{.arg diagnosis} must be the result of {.fun diagnose}.", call = parent.frame())
   }
 }

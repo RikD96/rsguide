@@ -12,16 +12,16 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 old_options <- options(width = 90, cli.num_colors = 1)
 ```
 
-rsguia's suggestions are not hard-coded in the package: they come from a
+rsguide's suggestions are not hard-coded in the package: they come from a
 **rules table**. This lets you add new analyses (an index you use often, a
 method from your lab) by writing one row in the table and, optionally, a
 code template.
 
 ```{r setup}
-library(rsguia)
+library(rsguide)
 ```
 
-## How rsguia decides what to suggest
+## How rsguide decides what to suggest
 
 There are three steps:
 
@@ -38,7 +38,7 @@ same scene), each time series, each vector and each image-vector
 combination. Here are the contexts of an example:
 
 ```{r}
-folder <- system.file("extdata", package = "rsguia")
+folder <- system.file("extdata", package = "rsguide")
 d <- diagnose(folder)
 
 for (cx in d$contexts) {
@@ -52,11 +52,11 @@ for (cx in d$contexts) {
 |---|---|
 | `raster`, `vector`, `table` | type of data |
 | `band:coastal`, `band:blue`, `band:green`, `band:red`, `band:rededge`, `band:nir`, `band:swir1`, `band:swir2`, `band:thermal`, `band:quality` | band identified |
-| `multispectral` | 4 or more spectral bands (option `rsguia.min_multispectral_bands`) |
+| `multispectral` | 4 or more spectral bands (option `rsguide.min_multispectral_bands`) |
 | `dem` | raster that looks like a digital elevation model |
 | `scale:reflectance_0_1`, `scale:int_10000`, `scale:landsat_c2`, `scale:int_8bit`, `scale:index`, `scale:categorical`, `scale:elevation`, `scale:unknown` | value scale |
 | `time_series` | images of the same area on 2 or more dates |
-| `long_series` | series with 10 or more dates (option `rsguia.min_dates_long_series`) |
+| `long_series` | series with 10 or more dates (option `rsguide.min_dates_long_series`) |
 | `vector:points`, `vector:lines`, `vector:polygons` | vector geometry |
 | `vector:labeled` | vector with a class column (text with few categories) |
 | `overlap` | the vector falls, at least partly, inside the raster |
@@ -81,11 +81,11 @@ function `eval_condition()`:
 
 ```{r}
 tags <- d$contexts$C2$tags
-rsguia:::eval_condition("band:green & band:nir", tags)
-rsguia:::eval_condition("dem | time_series", tags)
+rsguide:::eval_condition("band:green & band:nir", tags)
+rsguide:::eval_condition("dem | time_series", tags)
 ```
 
-If a condition uses a tag that does not exist (a typo, for example), rsguia
+If a condition uses a tag that does not exist (a typo, for example), rsguide
 warns you:
 
 ```{r}
@@ -94,7 +94,7 @@ bad <- data.frame(
   condition = "band:reed & band:nir",
   rationale = "-", caveats = "-", packages = "terra"
 )
-rules <- rsguia:::validate_rules(bad)
+rules <- rsguide:::validate_rules(bad)
 ```
 
 ## The table columns
@@ -102,7 +102,7 @@ rules <- rsguia:::validate_rules(bad)
 Here is the table shipped with the package:
 
 ```{r}
-rules <- rsguia_rules()
+rules <- rsguide_rules()
 names(rules)
 rules[rules$id == "ndvi", ]
 ```
@@ -155,7 +155,7 @@ If you prefer editing in a spreadsheet:
 1. Copy the package table to a folder of yours:
 
     ```{r, eval = FALSE}
-    file.copy(system.file("rules", "rules.csv", package = "rsguia"), "my_rules.csv")
+    file.copy(system.file("rules", "rules.csv", package = "rsguide"), "my_rules.csv")
     ```
 
 2. Open `my_rules.csv` in Excel, LibreOffice or Google Sheets, add or edit
@@ -172,7 +172,7 @@ If you prefer editing in a spreadsheet:
 
 Without a template the analysis is still suggested, but `show_code()` will
 have nothing to show. A template is a regular `.R` file with
-**placeholders** in braces, which rsguia replaces with the user's data:
+**placeholders** in braces, which rsguide replaces with the user's data:
 
 | Placeholder | Replaced by |
 |---|---|
@@ -189,7 +189,7 @@ have nothing to show. A template is a regular `.R` file with
 The NDVI template, for example:
 
 ```{r}
-cat(readLines(system.file("templates", "ndvi.R", package = "rsguia")), sep = "\n")
+cat(readLines(system.file("templates", "ndvi.R", package = "rsguide")), sep = "\n")
 ```
 
 Let's write the GNDVI template and point to it in the `template` column:
@@ -210,14 +210,14 @@ d <- diagnose(img, rules = rbind(rules, gndvi))
 show_code(d, "gndvi")
 ```
 
-Note that rsguia already added the `(img - 1000) / 10000` conversion,
+Note that rsguide already added the `(img - 1000) / 10000` conversion,
 because it detected the Sentinel-2 offset in this image.
 
 ## Tips
 
 * **One analysis per row.** If the same analysis works with different band
   combinations, use `|` in the condition instead of repeating the row.
-* **No repetition.** When a rule holds for the image alone, rsguia does not
+* **No repetition.** When a rule holds for the image alone, rsguide does not
   repeat it for "image + points" or for the time series that contains the
   image. That is why NDVI appears once per image, and point extraction only
   appears in the context that includes the points.
@@ -225,15 +225,15 @@ because it detected the Sentinel-2 offset in this image.
   rather than generic warnings.
 * **Adjusting thresholds.** To change the number of dates that makes a long
   series or the number of bands that makes multispectral data, use
-  `options(rsguia.min_dates_long_series = ...)` and
-  `options(rsguia.min_multispectral_bands = ...)`.
+  `options(rsguide.min_dates_long_series = ...)` and
+  `options(rsguide.min_multispectral_bands = ...)`.
 
 ## Contributing to the package
 
-To include a rule in rsguia itself, and not only in your copy:
+To include a rule in rsguide itself, and not only in your copy:
 
 1. add the row to `inst/rules/rules.csv`;
-2. write the template in `inst/templates/<id>.R`; rsguia finds it by `id`,
+2. write the template in `inst/templates/<id>.R`; rsguide finds it by `id`,
    with no need for the `template` column;
 3. add a test to `tests/testthat/test-rules.R` with synthetic data that
    trigger the rule. The test "the generated code for every suggestion runs
