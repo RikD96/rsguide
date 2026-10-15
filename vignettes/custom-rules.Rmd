@@ -1,0 +1,245 @@
+---
+title: "Writing your own rules"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Writing your own rules}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+old_options <- options(width = 90, cli.num_colors = 1)
+```
+
+rsguia's suggestions are not hard-coded in the package: they come from a
+**rules table**. This lets you add new analyses (an index you use often, a
+method from your lab) by writing one row in the table and, optionally, a
+code template.
+
+```{r setup}
+library(rsguia)
+```
+
+## How rsguia decides what to suggest
+
+There are three steps:
+
+1. **Diagnosis.** `diagnose()` describes the data and summarizes what it
+   found as **tags**: `band:red`, `band:nir`, `dem`, `time_series`,
+   `vector:points`, `overlap`...
+2. **Rules.** Each rule has a **condition** written with these tags. If the
+   condition is true, the analysis is suggested.
+3. **Code.** The analysis' code template is filled in with the names of
+   your files and bands.
+
+Tags are computed for each **context**: each image (or set of bands from the
+same scene), each time series, each vector and each image-vector
+combination. Here are the contexts of an example:
+
+```{r}
+folder <- system.file("extdata", package = "rsguia")
+d <- diagnose(folder)
+
+for (cx in d$contexts) {
+  cat(cx$id, "-", cx$label, "\n  ", paste(cx$tags, collapse = ", "), "\n")
+}
+```
+
+## Available tags
+
+| Tag | When it appears |
+|---|---|
+| `raster`, `vector`, `table` | type of data |
+| `band:coastal`, `band:blue`, `band:green`, `band:red`, `band:rededge`, `band:nir`, `band:swir1`, `band:swir2`, `band:thermal`, `band:quality` | band identified |
+| `multispectral` | 4 or more spectral bands (option `rsguia.min_multispectral_bands`) |
+| `dem` | raster that looks like a digital elevation model |
+| `scale:reflectance_0_1`, `scale:int_10000`, `scale:landsat_c2`, `scale:int_8bit`, `scale:index`, `scale:categorical`, `scale:elevation`, `scale:unknown` | value scale |
+| `time_series` | images of the same area on 2 or more dates |
+| `long_series` | series with 10 or more dates (option `rsguia.min_dates_long_series`) |
+| `vector:points`, `vector:lines`, `vector:polygons` | vector geometry |
+| `vector:labeled` | vector with a class column (text with few categories) |
+| `overlap` | the vector falls, at least partly, inside the raster |
+| `crs_mismatch` | raster and vector in different coordinate reference systems |
+
+## Writing conditions
+
+A condition combines tags with three operators:
+
+| Operator | Meaning | Example |
+|---|---|---|
+| `&` | and | `band:red & band:nir` |
+| **\|** | or | band:green & band:nir **\|** band:green & band:swir1 |
+| `!` | not | `multispectral & !time_series` |
+
+`&` is evaluated before `|`, so `a & b | c` means "(a and b) or c". There
+are no parentheses: for more complex conditions, spell out the alternatives
+separated by `|`.
+
+You can test a condition against the tags of a context with the internal
+function `eval_condition()`:
+
+```{r}
+tags <- d$contexts$C2$tags
+rsguia:::eval_condition("band:green & band:nir", tags)
+rsguia:::eval_condition("dem | time_series", tags)
+```
+
+If a condition uses a tag that does not exist (a typo, for example), rsguia
+warns you:
+
+```{r}
+bad <- data.frame(
+  id = "test", analysis = "Test", category = "Test",
+  condition = "band:reed & band:nir",
+  rationale = "-", caveats = "-", packages = "terra"
+)
+rules <- rsguia:::validate_rules(bad)
+```
+
+## The table columns
+
+Here is the table shipped with the package:
+
+```{r}
+rules <- rsguia_rules()
+names(rules)
+rules[rules$id == "ndvi", ]
+```
+
+| Column | Content |
+|---|---|
+| `id` | short, unique identifier without spaces (e.g. `gndvi`) |
+| `analysis` | name of the analysis, as shown to the user |
+| `category` | group under which the analysis is listed (e.g. `Vegetation indices`) |
+| `condition` | when to suggest it (see above) |
+| `rationale` | why the analysis is possible with these data, in plain language |
+| `caveats` | assumptions and precautions, separated by a vertical bar (**\|**) |
+| `packages` | suggested R packages, separated by `;` |
+| `template` | *optional*: path to an `.R` file with the code template |
+
+## Adding a rule
+
+### From R
+
+Build a `data.frame` with the same columns and bind it to the package
+table:
+
+```{r}
+gndvi <- data.frame(
+  id = "gndvi",
+  analysis = "GNDVI (Green NDVI)",
+  category = "Vegetation indices",
+  condition = "band:green & band:nir",
+  rationale = paste(
+    "Uses the green band instead of red. It is more sensitive to chlorophyll",
+    "concentration and saturates less than NDVI in dense vegetation."
+  ),
+  caveats = "Use surface reflectance | Mask clouds and shadows",
+  packages = "terra"
+)
+my_rules <- rbind(rules, gndvi)
+
+img <- file.path(folder, "jurua_s2_20240814.tif")
+d <- diagnose(img, rules = my_rules)
+d$suggestions[d$suggestions$id == "gndvi", c("analysis", "applies_to")]
+```
+
+To use **only** your rules, pass just your `data.frame`:
+`diagnose(img, rules = gndvi)`.
+
+### From a spreadsheet
+
+If you prefer editing in a spreadsheet:
+
+1. Copy the package table to a folder of yours:
+
+    ```{r, eval = FALSE}
+    file.copy(system.file("rules", "rules.csv", package = "rsguia"), "my_rules.csv")
+    ```
+
+2. Open `my_rules.csv` in Excel, LibreOffice or Google Sheets, add or edit
+   rows and save it as CSV. Comma or semicolon separators work, as do the
+   UTF-8 and latin1 encodings.
+
+3. Use the file directly:
+
+    ```{r, eval = FALSE}
+    d <- diagnose("my_images/", rules = "my_rules.csv")
+    ```
+
+## Writing a code template
+
+Without a template the analysis is still suggested, but `show_code()` will
+have nothing to show. A template is a regular `.R` file with
+**placeholders** in braces, which rsguia replaces with the user's data:
+
+| Placeholder | Replaced by |
+|---|---|
+| `{load_raster:img}` | line(s) that read the raster into the object `img` (the name after `:` is free) |
+| `{load_vector:points}` | line(s) that read the vector (or the table with coordinates) into the object `points` |
+| `{load_series:imgs}` | lines that create the list `imgs`, with one image per date |
+| `{scale}` | line that converts `img` to 0-1 reflectance, according to the detected scale |
+| `{conversion}` | the same conversion, as an expression of `x` (useful inside functions) |
+| `{blue}`, `{green}`, `{red}`, `{rededge}`, `{nir}`, `{swir1}`, `{swir2}`, `{thermal}`, `{coastal}` | name of the corresponding layer in the raster |
+| `{index_expr}`, `{index_name}` | NDVI expression as a function of `x` (or the first layer, if there is no red and NIR) and its name |
+| `{dates}` | vector of dates of the series, as `as.Date(c(...))` |
+| `{class_column}` | class column of the vector (for training samples) |
+
+The NDVI template, for example:
+
+```{r}
+cat(readLines(system.file("templates", "ndvi.R", package = "rsguia")), sep = "\n")
+```
+
+Let's write the GNDVI template and point to it in the `template` column:
+
+```{r}
+template <- tempfile(fileext = ".R")  # use a path of yours, e.g. "templates/gndvi.R"
+writeLines(c(
+  "# GNDVI = (NIR - green) / (NIR + green)",
+  "{load_raster:img}",
+  "{scale}",
+  "gndvi <- (img[[\"{nir}\"]] - img[[\"{green}\"]]) / (img[[\"{nir}\"]] + img[[\"{green}\"]])",
+  "terra::plot(gndvi, main = \"GNDVI\")"
+), template)
+
+gndvi$template <- template
+rules$template <- NA
+d <- diagnose(img, rules = rbind(rules, gndvi))
+show_code(d, "gndvi")
+```
+
+Note that rsguia already added the `(img - 1000) / 10000` conversion,
+because it detected the Sentinel-2 offset in this image.
+
+## Tips
+
+* **One analysis per row.** If the same analysis works with different band
+  combinations, use `|` in the condition instead of repeating the row.
+* **No repetition.** When a rule holds for the image alone, rsguia does not
+  repeat it for "image + points" or for the time series that contains the
+  image. That is why NDVI appears once per image, and point extraction only
+  appears in the context that includes the points.
+* **Useful caveats.** Write caveats as actions ("resample SWIR to 10 m")
+  rather than generic warnings.
+* **Adjusting thresholds.** To change the number of dates that makes a long
+  series or the number of bands that makes multispectral data, use
+  `options(rsguia.min_dates_long_series = ...)` and
+  `options(rsguia.min_multispectral_bands = ...)`.
+
+## Contributing to the package
+
+To include a rule in rsguia itself, and not only in your copy:
+
+1. add the row to `inst/rules/rules.csv`;
+2. write the template in `inst/templates/<id>.R`; rsguia finds it by `id`,
+   with no need for the `template` column;
+3. add a test to `tests/testthat/test-rules.R` with synthetic data that
+   trigger the rule. The test "the generated code for every suggestion runs
+   without errors" runs your template automatically;
+4. run `devtools::check()`.
+
+```{r, include = FALSE}
+options(old_options)
+```

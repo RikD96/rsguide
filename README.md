@@ -1,72 +1,73 @@
 # rsguia
 
-**Diagnóstico de dados de sensoriamento remoto e sugestão de análises.**
+**Diagnose remote sensing data and suggest analyses.**
 
-O rsguia recebe dados de sensoriamento remoto (imagens de satélite, modelos de
-elevação, pontos, polígonos ou tabelas com coordenadas), identifica
-automaticamente o que eles são e sugere quais análises são possíveis. Cada
-sugestão vem com uma justificativa em linguagem simples, os cuidados
-necessários e um exemplo de código já preenchido com os seus arquivos e
-bandas.
+rsguia takes remote sensing data (satellite images, elevation models,
+points, polygons or tables with coordinates), automatically identifies what
+they are and suggests which analyses are possible. Each suggestion comes
+with a plain-language rationale, the necessary caveats and an example code
+snippet already filled in with your files and bands.
 
-O pacote **não executa** as análises: ele diagnostica e recomenda. É voltado
-a ecólogos e estudantes que estão começando no sensoriamento remoto.
+The package **does not run** the analyses: it diagnoses and recommends. It
+is aimed at ecologists and students who are new to remote sensing.
 
-## Instalação
+## Installation
 
 ```r
 # install.packages("remotes")
 remotes::install_github("RikD96/rsguia", build_vignettes = TRUE)
 ```
 
-## Exemplo
+## Example
 
 ```r
 library(rsguia)
 
-# Um arquivo, um objeto do R ou uma pasta inteira
-pasta <- system.file("extdata", package = "rsguia")
-d <- diagnosticar(pasta)
-d                      # diagnóstico e lista de análises sugeridas
-summary(d)             # justificativas e cuidados de cada análise
-ver_codigo(d, "ndvi")  # código pronto para copiar
-as.data.frame(d)       # relatório em tabela (para salvar em CSV)
+# A file, an R object or a whole folder
+folder <- system.file("extdata", package = "rsguia")
+d <- diagnose(folder)
+d                     # diagnosis and list of suggested analyses
+summary(d)            # rationale and caveats of each analysis
+show_code(d, "ndvi")  # code ready to copy
+as.data.frame(d)      # report as a table (to save as CSV)
 ```
 
-O que o `diagnosticar()` identifica:
+What `diagnose()` identifies:
 
-* tipo de dado: raster, vetor (pontos, linhas, polígonos) ou tabela com
-  coordenadas (`lon`/`lat`, `x`/`y`, `decimalLongitude`/`decimalLatitude`...);
-* camadas, resolução, sistema de coordenadas, extensão e valores ausentes;
-* bandas e provável sensor (Sentinel-2, Landsat 4–9 ou nomes genéricos como
+* type of data: raster, vector (points, lines, polygons) or table with
+  coordinates (`lon`/`lat`, `x`/`y`, `decimalLongitude`/`decimalLatitude`...);
+* layers, resolution, coordinate reference system, extent and missing values;
+* bands and likely sensor (Sentinel-2, Landsat 4-9 or generic names such as
   `red`, `nir`, `swir1`);
-* escala dos valores (reflectância 0–1, inteiros ×10.000, Coleção 2 do
-  Landsat, deslocamento de +1000 do Sentinel-2...);
-* modelos digitais de elevação, mapas de classes e séries temporais;
-* se os vetores caem sobre o raster, e se os sistemas de coordenadas batem.
+* value scale (0-1 reflectance, integers x 10,000, Landsat Collection 2,
+  the +1000 offset of Sentinel-2...);
+* digital elevation models, class maps and time series;
+* whether vectors fall on the raster, and whether the coordinate systems
+  match.
 
-Análises que podem ser sugeridas: NDVI, EVI, SAVI, NDRE, NDMI, NDWI, MNDWI,
-NBR, classificação supervisionada e não supervisionada, detecção de mudanças,
-análise de tendência, declividade, orientação, bacias e drenagem, extração de
-valores em pontos, estatística zonal e métricas de paisagem.
+Analyses that can be suggested: NDVI, EVI, SAVI, NDRE, NDMI, NDWI, MNDWI,
+NBR, supervised and unsupervised classification, change detection, trend
+analysis, slope, aspect, watersheds and drainage, extraction of values at
+points, zonal statistics and landscape metrics.
 
-## Regras editáveis
+## Editable rules
 
-As recomendações vêm de uma tabela (`inst/regras/regras.csv`) em que cada
-linha é uma análise, com a condição para sugeri-la. Veja com
-`regras_rsguia()` e acrescente regras próprias sem mexer no código:
+Recommendations come from a table (`inst/rules/rules.csv`) where each row
+is an analysis, with the condition under which it is suggested. Inspect it
+with `rsguia_rules()` and add your own rules without touching the code:
 
 ```r
-minhas_regras <- rbind(regras_rsguia(), nova_regra)
-diagnosticar(pasta, regras = minhas_regras)
+my_rules <- rbind(rsguia_rules(), new_rule)
+diagnose(folder, rules = my_rules)
 ```
 
-## Documentação
+## Documentation
 
-* `?rsguia`: visão geral do pacote, entradas aceitas e sensores reconhecidos.
-* `vignette("estudo-de-caso-jurua", package = "rsguia")`: diagnóstico de
-  imagens Sentinel-2 do rio Juruá, perto de Cruzeiro do Sul (AC), do arquivo
-  isolado à pasta com série temporal, MDE e parcelas de campo.
-* `vignette("criando-regras", package = "rsguia")`: como acrescentar
-  análises novas, escrever condições e modelos de código.
-* `?dados_jurua`: os dados de exemplo e suas fontes.
+* `?rsguia`: package overview, accepted inputs and recognized sensors.
+* `vignette("case-study-jurua", package = "rsguia")`: diagnosis of
+  Sentinel-2 images of the Jurua River, near Cruzeiro do Sul (Acre,
+  Brazil), from a single file to a folder with a time series, a DEM and
+  field plots.
+* `vignette("custom-rules", package = "rsguia")`: how to add new analyses,
+  write conditions and code templates.
+* `?jurua_data`: the example data and their sources.

@@ -1,0 +1,5 @@
+sensor,label,file_pattern
+sentinel2,Sentinel-2 (MSI),(^|_)S2[ABC]_|(^|[_/])T[0-9]{2}[A-Z]{3}(_|$)
+landsat89,Landsat 8/9 (OLI/TIRS),(^|_)L[CO]0[89]_
+landsat457,Landsat 4-7 (TM/ETM+),(^|_)L[TE]0[457]_
+generic,Generic band names,

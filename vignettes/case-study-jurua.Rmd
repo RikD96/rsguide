@@ -1,0 +1,229 @@
+---
+title: "Case study: the Jurua River (Acre, Brazil)"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Case study: the Jurua River (Acre, Brazil)}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 6,
+  fig.height = 5,
+  dpi = 72,
+  out.width = "100%"
+)
+old_options <- options(width = 90, cli.num_colors = 1)
+```
+
+Got a satellite image file and don't know where to start? **rsguia** looks
+at your data, works out what it is and suggests which analyses are possible,
+explaining in plain language why each one makes sense, what to watch out for
+and how to do it in R.
+
+rsguia **does not run** the analyses: it diagnoses and recommends. The
+decision (and the interpretation) is still yours.
+
+This case study uses real data from the Jurua River, near the town of
+Cruzeiro do Sul, in the state of Acre, Brazil.
+
+```{r setup}
+library(rsguia)
+```
+
+## The data
+
+The package ships four example files in `inst/extdata`:
+
+```{r}
+folder <- system.file("extdata", package = "rsguia")
+list.files(folder)
+```
+
+* `jurua_s2_20190816.tif` and `jurua_s2_20240814.tif`: 2.5 x 2.5 km crops of
+  **Sentinel-2** images (level L2A, Collection 1) from the 2019 and 2024 dry
+  seasons, with seven bands at 10 m. The values are exactly as delivered by
+  the provider (integers).
+* `jurua_dem_copernicus.tif`: the Copernicus GLO-30 **digital elevation
+  model** for the same area.
+* `jurua_plots.csv`: 25 **fictitious** field plots with longitude and
+  latitude, for demonstration only.
+
+The data come from the public Earth Search platform (AWS); the script that
+produced them is `data-raw/jurua.R` in the package repository. See
+`?jurua_data` for details and credits.
+
+## 1. Diagnosing one image
+
+Start by giving the file to `diagnose()`:
+
+```{r}
+img <- file.path(folder, "jurua_s2_20240814.tif")
+d <- diagnose(img)
+d
+```
+
+Note what rsguia worked out on its own:
+
+* **Sensor:** from the band names (`B02`, `B03`, ..., `B12`), the image is
+  from Sentinel-2. Each band was matched to its spectral region (blue,
+  green, red, infrared...).
+* **Scale:** the values are integers and almost all of them are above 1000.
+  This reveals the *+1000 offset* that Sentinel-2 introduced in 2022: the
+  actual reflectance is `(value - 1000) / 10000`. Forgetting this detail is
+  a common mistake that distorts indices such as EVI.
+* **Suggestions:** with blue, green, red, red edge, near and shortwave
+  infrared, the image supports vegetation, water and burn indices, as well
+  as land cover classification.
+
+To read the rationale and caveats of each analysis, use `summary()`. To
+keep this document short, only the beginning is shown here:
+
+```{r}
+overview <- capture.output(summary(d))
+cat(head(overview, 30), sep = "\n")
+```
+
+## 2. From diagnosis to code
+
+Each suggestion comes with example code **already filled in** with the path
+to your file, the names of your bands and the right scale conversion. Here
+is the code for MNDWI, an index that highlights water:
+
+```{r}
+code <- show_code(d, "mndwi")
+```
+
+The code can be copied and run as is. Here we run it straight from the text
+returned by `show_code()`:
+
+```{r mndwi, results = "hide", fig.show = "hold", fig.height = 4.5}
+eval(parse(text = code))
+```
+
+The main channel of the Jurua shows up in the corners of the image and a
+horseshoe-shaped meander crosses the center. The water threshold
+(`mndwi > 0`) is only a starting point: as the caveats say, it should be
+checked against the image.
+
+## 3. Diagnosing a whole folder
+
+In practice we rarely have a single file. Give it the whole folder:
+
+```{r}
+dd <- diagnose(folder)
+dd
+```
+
+Now rsguia:
+
+* identified the **time series** (the dates are in the file names) and
+  suggested change detection;
+* recognized the **DEM** and suggested slope, aspect and drainage;
+* read the **plots** from the CSV, found the `longitude`/`latitude`
+  columns, saw that they fall inside the rasters and suggested extracting
+  the values for each plot;
+* warned that the plots (degrees, WGS 84) and the rasters (UTM 18S) use
+  different coordinate reference systems.
+
+## 4. Exporting the report
+
+`as.data.frame()` turns the suggestions into a table that can be saved as
+CSV and opened in a spreadsheet:
+
+```{r}
+report <- as.data.frame(dd)
+knitr::kable(unique(report[, c("analysis", "category", "packages")]), row.names = FALSE)
+```
+
+```{r, eval = FALSE}
+utils::write.csv(report, "rsguia_report.csv", row.names = FALSE)
+```
+
+You can also export the description of each file:
+
+```{r}
+items <- as.data.frame(dd, type = "items")
+knitr::kable(items[, c("id", "name", "type", "resolution_m", "sensor", "scale")])
+```
+
+## 5. Running a suggestion: what changed between 2019 and 2024?
+
+The code suggested for the time series computes the NDVI difference between
+the first and last dates:
+
+```{r}
+show_code(dd, "change_detection")
+```
+
+```{r change, results = "hide", fig.height = 4.5}
+eval(parse(text = show_code(dd, "change_detection")))
+```
+
+Positive values (vegetation gain) appear along the banks of the meander,
+which seem to have been colonized by vegetation. The most negative values,
+in contrast, are in the main river channel (bottom-left corner): there was
+no vegetation loss there, but a change in the water itself (color,
+sediment, river level), which also affects NDVI. Not every "change" is
+about vegetation! To interpret it safely, compare with true-color images and
+keep the caveats in mind: same season, same scale and no clouds on either
+date.
+
+## 6. Adjusting the rules
+
+The recommendations come from an editable table. To see it:
+
+```{r}
+rules <- rsguia_rules()
+knitr::kable(rules[, c("id", "condition")])
+```
+
+The `condition` column combines **tags** produced by the diagnosis
+(`band:red`, `dem`, `time_series`, `vector:points`, `overlap`...) with `&`
+(and), `|` (or) and `!` (not). The tags found in your data are stored in
+`contexts`:
+
+```{r}
+dd$contexts$C2$tags
+```
+
+You can add your own rules without touching the package (see
+`vignette("custom-rules")`):
+
+```{r}
+gndvi <- data.frame(
+  id = "gndvi",
+  analysis = "GNDVI (Green NDVI)",
+  category = "Vegetation indices",
+  condition = "band:green & band:nir",
+  rationale = "Uses green instead of red and is more sensitive to chlorophyll.",
+  caveats = "Use surface reflectance | Mask clouds and shadows",
+  packages = "terra"
+)
+d2 <- diagnose(img, rules = rbind(rules, gndvi))
+"gndvi" %in% d2$suggestions$id
+```
+
+Some thresholds can also be changed. Trend analysis, for example, is only
+suggested with 10 or more dates; to change that:
+
+```{r, eval = FALSE}
+options(rsguia.min_dates_long_series = 6)
+```
+
+## Limitations
+
+* rsguia recognizes the sensor from the **names** of the bands and files.
+  If the bands have generic names (`lyr.1`, `band_1`), rename them
+  (`names(r) <- c("blue", "green", "red", "nir")`) or set the sensor:
+  `diagnose(x, sensor = "sentinel2")`.
+* DEM and scale detection rely on heuristics; read the alerts.
+* The suggestions say what is **possible** with the data, not what is
+  appropriate for your research question. That choice is yours.
+
+```{r, include = FALSE}
+options(old_options)
+```

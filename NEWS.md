@@ -1,14 +1,14 @@
 # rsguia 0.1.0
 
-Primeira versão.
+First release.
 
-* `diagnosticar()` identifica rasters, vetores e tabelas com coordenadas;
-  reconhece bandas e sensor (Sentinel-2, Landsat 4-9, nomes genéricos), escala
-  dos valores (incluindo o deslocamento de +1000 do Sentinel-2), MDE, mapas de
-  classes, séries temporais e sobreposição raster × vetor.
-* `sugerir_analises()` compara o diagnóstico com uma tabela editável de 19
-  regras (`regras_rsguia()`) e sugere análises com justificativa, cuidados,
-  pacotes e código de exemplo já preenchido (`ver_codigo()`).
-* `print()`, `summary()` e `as.data.frame()` para ler e exportar o relatório.
-* Dados de exemplo do rio Juruá (AC) e duas vignettes: estudo de caso e
-  criação de regras próprias.
+* `diagnose()` identifies rasters, vectors and tables with coordinates;
+  recognizes bands and sensor (Sentinel-2, Landsat 4-9, generic names), the
+  value scale (including the +1000 offset of Sentinel-2), DEMs, class maps,
+  time series and raster/vector overlap.
+* `suggest_analyses()` matches the diagnosis against an editable table of 19
+  rules (`rsguia_rules()`) and suggests analyses with rationale, caveats,
+  packages and example code already filled in (`show_code()`).
+* `print()`, `summary()` and `as.data.frame()` to read and export the report.
+* Example data from the Jurua River (Acre, Brazil) and two vignettes: a case
+  study and how to write custom rules.
