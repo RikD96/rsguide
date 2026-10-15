@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
   dpi = 72,
   out.width = "100%"
 )
-options(width = 90, cli.num_colors = 1)
+opcoes_originais <- options(width = 90, cli.num_colors = 1)
 ```
 
 Você recebeu um arquivo de imagem de satélite e não sabe por onde começar?
@@ -220,3 +220,7 @@ options(rsguia.min_datas_serie_longa = 6)
 * A detecção de MDE e de escala é baseada em heurísticas; confira os alertas.
 * As sugestões indicam o que é **possível** com os dados, não o que é
   adequado à sua pergunta de pesquisa. Essa escolha é sua.
+
+```{r, include = FALSE}
+options(opcoes_originais)
+```

@@ -90,11 +90,11 @@ análises novas à tabela de regras.
 }
 
 \author{
-\strong{Maintainer}: Henrique Paulo \email{mundo.virais@gmail.com}
+\strong{Maintainer}: Henrique Paulo \email{mundo.virais@gmail.com} [copyright holder]
 
 Authors:
 \itemize{
-  \item Henrique Paulo \email{mundo.virais@gmail.com}
+  \item Henrique Paulo \email{mundo.virais@gmail.com} [copyright holder]
 }
 
 }

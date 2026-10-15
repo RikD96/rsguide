@@ -51,8 +51,10 @@ summary(d)
 tabela <- as.data.frame(d)
 tabela[, c("analise", "pacotes")]
 as.data.frame(d, tipo = "itens")
-\dontrun{
-utils::write.csv(tabela, "relatorio_rsguia.csv", row.names = FALSE)
-}
+
+# Salvando o relatório em CSV (aqui num arquivo temporário)
+arquivo <- tempfile(fileext = ".csv")
+utils::write.csv(tabela, arquivo, row.names = FALSE)
+unlink(arquivo)
 
 }
