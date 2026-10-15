@@ -1,0 +1,26 @@
+Package: rsguia
+Title: Diagnóstico de Dados de Sensoriamento Remoto e Sugestão de Análises
+Version: 0.0.0.9000
+Authors@R: 
+    person("Henrique", "Paulo", , "mundo.virais@gmail.com", role = c("aut", "cre"))
+Description: Recebe dados de sensoriamento remoto (rasters, vetores e
+    tabelas com coordenadas), identifica automaticamente o tipo de dado,
+    as bandas e o provável sensor, e sugere análises possíveis com
+    justificativas em linguagem simples, cuidados e exemplos de código.
+    Voltado a ecólogos e estudantes iniciantes.
+License: MIT + file LICENSE
+Config/roxygen2/version: 8.1.1
+Encoding: UTF-8
+Language: pt-BR
+Roxygen: list(markdown = TRUE)
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Imports: 
+    cli,
+    sf,
+    stats,
+    terra,
+    utils
+Depends: 
+    R (>= 4.1.0)
