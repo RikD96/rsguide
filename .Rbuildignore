@@ -7,3 +7,4 @@
 ^pkgdown$
 ^manual$
 ^tests/testthat/_problems$
+^cran-comments\.md$

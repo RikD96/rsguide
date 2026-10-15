@@ -1,8 +1,8 @@
 Package: rsguia
 Title: Diagnóstico de Dados de Sensoriamento Remoto e Sugestão de Análises
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: 
-    person("Henrique", "Paulo", , "mundo.virais@gmail.com", role = c("aut", "cre"))
+    person("Henrique", "Paulo", , "mundo.virais@gmail.com", role = c("aut", "cre", "cph"))
 Description: Recebe dados de sensoriamento remoto (rasters, vetores e
     tabelas com coordenadas), identifica automaticamente o tipo de dado,
     as bandas e o provável sensor, e sugere análises possíveis com

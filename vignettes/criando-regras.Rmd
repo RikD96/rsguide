@@ -9,7 +9,7 @@ vignette: >
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
-options(width = 90, cli.num_colors = 1)
+opcoes_originais <- options(width = 90, cli.num_colors = 1)
 ```
 
 As sugestões do rsguia não estão escritas no código do pacote: elas vêm de
@@ -238,3 +238,7 @@ Para incluir uma regra no próprio rsguia, e não só na sua cópia:
    que disparem a regra. O teste "o código gerado para cada sugestão roda sem
    erros" executa automaticamente o seu modelo;
 4. rode `devtools::check()`.
+
+```{r, include = FALSE}
+options(opcoes_originais)
+```
