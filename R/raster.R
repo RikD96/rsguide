@@ -84,7 +84,7 @@ raster_alerts <- function(item, values) {
   }
   if (all(is.na(item$bands$group)) && !item$dem$dem && item$n_layers > 1) {
     a[[length(a) + 1]] <- alert(id, sprintf(
-      "I did not recognize the layer names (%s). Rename them so rsguia can identify the bands, e.g. names(r) <- c(\"blue\", \"green\", \"red\", \"nir\").",
+      "I did not recognize the layer names (%s). Rename them so rsguide can identify the bands, e.g. names(r) <- c(\"blue\", \"green\", \"red\", \"nir\").",
       paste(utils::head(item$layer_names, 4), collapse = ", ")))
   }
   if (length(item$sensor$tied)) {

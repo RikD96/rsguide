@@ -7,7 +7,7 @@
 #' example code of each one). `as.data.frame()` turns the report into a
 #' table, which can be saved with [utils::write.csv()].
 #'
-#' @param object,x An object of class `rsguia_diagnosis`, created by
+#' @param object,x An object of class `rsguide_diagnosis`, created by
 #'   [diagnose()].
 #' @param code If `TRUE`, includes the example code of each analysis.
 #' @param type Which table to export: `"suggestions"` (one row per analysis
@@ -17,7 +17,7 @@
 #' @param ... Ignored.
 #'
 #' @return `summary()` returns an object of class
-#'   `summary.rsguia_diagnosis`; `as.data.frame()` returns a `data.frame`.
+#'   `summary.rsguide_diagnosis`; `as.data.frame()` returns a `data.frame`.
 #'
 #' @examples
 #' r <- terra::rast(nrows = 20, ncols = 20, nlyrs = 4, crs = "EPSG:32718",
@@ -40,20 +40,20 @@ NULL
 
 #' @rdname diagnosis-summary
 #' @export
-summary.rsguia_diagnosis <- function(object, code = FALSE, ...) {
+summary.rsguide_diagnosis <- function(object, code = FALSE, ...) {
   structure(
     list(items = as.data.frame(object, type = "items"),
          alerts = object$alerts,
          series = object$series,
          suggestions = object$suggestions,
          code = code),
-    class = "summary.rsguia_diagnosis"
+    class = "summary.rsguide_diagnosis"
   )
 }
 
 #' @export
-print.summary.rsguia_diagnosis <- function(x, ...) {
-  cat(cli::rule(left = "rsguia diagnosis summary", line = 2), "\n", sep = "")
+print.summary.rsguide_diagnosis <- function(x, ...) {
+  cat(cli::rule(left = "rsguide diagnosis summary", line = 2), "\n", sep = "")
   for (k in seq_len(nrow(x$items))) {
     it <- x$items[k, ]
     cat(sprintf("%-4s", it$id), it$name, cli::col_grey(paste0("(", it$type, ")")), "\n")
@@ -75,7 +75,7 @@ print.summary.rsguia_diagnosis <- function(x, ...) {
 
 #' @rdname diagnosis-summary
 #' @export
-as.data.frame.rsguia_diagnosis <- function(x, row.names = NULL, optional = FALSE, ...,
+as.data.frame.rsguide_diagnosis <- function(x, row.names = NULL, optional = FALSE, ...,
                                            type = c("suggestions", "items", "alerts")) {
   type <- match.arg(type)
   switch(type,

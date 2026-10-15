@@ -1,8 +1,8 @@
 # Printing --------------------------------------------------------------------
 
 #' @export
-print.rsguia_diagnosis <- function(x, ...) {
-  cat(cli::rule(left = "rsguia diagnosis", line = 2), "\n", sep = "")
+print.rsguide_diagnosis <- function(x, ...) {
+  cat(cli::rule(left = "rsguide diagnosis", line = 2), "\n", sep = "")
   types <- table(vapply(x$items, `[[`, "", "type"))
   cat("Inputs: ", paste(sprintf("%d %s", types, names(types)), collapse = ", "), "\n", sep = "")
 

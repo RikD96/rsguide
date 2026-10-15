@@ -7,7 +7,7 @@
 show_code(diagnosis, analysis = NULL)
 }
 \arguments{
-\item{diagnosis}{An object of class \code{rsguia_diagnosis}.}
+\item{diagnosis}{An object of class \code{rsguide_diagnosis}.}
 
 \item{analysis}{Id of the analysis (e.g. \code{"ndvi"}, column \code{id} of
 \code{diagnosis$suggestions}). If omitted, shows all of them.}

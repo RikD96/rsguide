@@ -1,6 +1,6 @@
 test_that("in-memory Sentinel-2 raster", {
   d <- diagnose(fake_raster())
-  expect_s3_class(d, "rsguia_diagnosis")
+  expect_s3_class(d, "rsguide_diagnosis")
   r1 <- d$items$R1
   expect_equal(r1$n_layers, 6)
   expect_equal(r1$sensor$sensor, "sentinel2")
@@ -77,7 +77,7 @@ test_that("a folder with several dates becomes a time series", {
   expect_true(all(c("time_series", "band:red", "band:nir") %in% tags))
   expect_false("long_series" %in% tags)
 
-  old <- options(rsguia.min_dates_long_series = 3)
+  old <- options(rsguide.min_dates_long_series = 3)
   on.exit(options(old), add = TRUE)
   expect_true("long_series" %in% diagnose(folder)$contexts$S1$tags)
 })
@@ -124,7 +124,7 @@ test_that("invalid inputs give clear errors", {
 })
 
 test_that("vector and table files are read from disk", {
-  folder <- tempfile("rsguia_")
+  folder <- tempfile("rsguide_")
   dir.create(folder)
   on.exit(unlink(folder, recursive = TRUE))
   sf::st_write(fake_polygons(), file.path(folder, "plots.gpkg"), quiet = TRUE)

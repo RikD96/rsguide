@@ -24,10 +24,10 @@ assumed to be WGS 84 (EPSG:4326).}
 with \code{\link[=suggest_analyses]{suggest_analyses()}}.}
 
 \item{rules}{Optional. Custom rules (\code{data.frame} or path to a CSV file)
-passed to \code{\link[=suggest_analyses]{suggest_analyses()}}; see \code{\link[=rsguia_rules]{rsguia_rules()}}.}
+passed to \code{\link[=suggest_analyses]{suggest_analyses()}}; see \code{\link[=rsguide_rules]{rsguide_rules()}}.}
 }
 \value{
-An object of class \code{rsguia_diagnosis}: a list with the elements
+An object of class \code{rsguide_diagnosis}: a list with the elements
 \code{items} (diagnosis of each dataset), \code{scenes}, \code{series}, \code{overlaps},
 \code{contexts} (tag sets used by the recommendation rules), \code{alerts} and,
 if \code{suggest = TRUE}, \code{suggestions}.
@@ -47,11 +47,11 @@ regular sample of cells.
 
 Some thresholds can be changed with \code{\link[=options]{options()}}:
 \itemize{
-\item \code{rsguia.min_multispectral_bands} (default 4): minimum number of spectral
+\item \code{rsguide.min_multispectral_bands} (default 4): minimum number of spectral
 bands for the data to be considered multispectral;
-\item \code{rsguia.min_dates_long_series} (default 10): minimum number of dates for
+\item \code{rsguide.min_dates_long_series} (default 10): minimum number of dates for
 a time series to allow trend analysis;
-\item \code{rsguia.sample_size} (default 100000): number of cells sampled.
+\item \code{rsguide.sample_size} (default 100000): number of cells sampled.
 }
 }
 \examples{

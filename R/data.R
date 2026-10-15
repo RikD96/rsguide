@@ -28,7 +28,7 @@
 #'   package repository.
 #'
 #' @examples
-#' folder <- system.file("extdata", package = "rsguia")
+#' folder <- system.file("extdata", package = "rsguide")
 #' list.files(folder)
 #'
 #' img <- terra::rast(file.path(folder, "jurua_s2_20240814.tif"))

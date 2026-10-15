@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(rsguia)
+library(rsguide)
 
-test_check("rsguia")
+test_check("rsguide")

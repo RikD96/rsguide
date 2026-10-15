@@ -1,6 +1,6 @@
-#' rsguia: diagnosis of remote sensing data and suggestion of analyses
+#' rsguide: diagnosis of remote sensing data and suggestion of analyses
 #'
-#' rsguia takes remote sensing data, automatically identifies what they are
+#' rsguide takes remote sensing data, automatically identifies what they are
 #' and suggests which analyses are possible. Each suggestion comes with a
 #' plain-language rationale, the necessary caveats and an example code
 #' snippet already filled in with your files and bands. The package does
@@ -13,10 +13,10 @@
 #'    It then calls [suggest_analyses()].
 #' 2. `print()` shows the diagnosis, the alerts and the list of suggested
 #'    analyses.
-#' 3. [summary()][summary.rsguia_diagnosis()] shows the rationale, caveats
+#' 3. [summary()][summary.rsguide_diagnosis()] shows the rationale, caveats
 #'    and packages of each analysis.
 #' 4. [show_code()] prints the example code, ready to copy.
-#' 5. [as.data.frame()][as.data.frame.rsguia_diagnosis()] exports the report
+#' 5. [as.data.frame()][as.data.frame.rsguide_diagnosis()] exports the report
 #'    as a table.
 #'
 #' @section Accepted inputs:
@@ -44,23 +44,23 @@
 #'   `vermelho`, ...).
 #'
 #' The aliases are listed in `system.file("rules", "bands.csv", package =
-#' "rsguia")`. When the names match more than one sensor, the package warns
+#' "rsguide")`. When the names match more than one sensor, the package warns
 #' you; set the sensor with `diagnose(x, sensor = "landsat89")`.
 #'
 #' @section Options:
-#' * `rsguia.min_multispectral_bands` (default 4): minimum number of
+#' * `rsguide.min_multispectral_bands` (default 4): minimum number of
 #'   spectral bands for the data to be considered multispectral.
-#' * `rsguia.min_dates_long_series` (default 10): minimum number of dates to
+#' * `rsguide.min_dates_long_series` (default 10): minimum number of dates to
 #'   suggest trend analysis.
-#' * `rsguia.sample_size` (default 100000): number of cells read to estimate
+#' * `rsguide.sample_size` (default 100000): number of cells read to estimate
 #'   statistics of large rasters.
 #'
 #' @section Learn more:
-#' * `vignette("case-study-jurua", package = "rsguia")`: case study with
+#' * `vignette("case-study-jurua", package = "rsguide")`: case study with
 #'   Sentinel-2 images of the Jurua River (Acre, Brazil).
-#' * `vignette("custom-rules", package = "rsguia")`: how to add new analyses
+#' * `vignette("custom-rules", package = "rsguide")`: how to add new analyses
 #'   to the rules table.
-#' * [rsguia_rules()]: the rules table and the available tags.
+#' * [rsguide_rules()]: the rules table and the available tags.
 #' * [jurua_data]: the example data.
 #'
 #' @keywords package

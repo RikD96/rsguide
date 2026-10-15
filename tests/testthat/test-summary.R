@@ -10,7 +10,7 @@ test_that("print shows the short list of suggestions", {
 test_that("summary shows rationale, caveats and, optionally, code", {
   d <- diagnose(image = fake_raster(), fake_points())
   s <- summary(d)
-  expect_s3_class(s, "summary.rsguia_diagnosis")
+  expect_s3_class(s, "summary.rsguide_diagnosis")
   out <- capture.output(print(s))
   expect_true(any(grepl("Why:", out)))
   expect_true(any(grepl("Caveats", out)))

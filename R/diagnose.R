@@ -21,20 +21,20 @@
 #' @param suggest If `TRUE` (default), also suggests the possible analyses
 #'   with [suggest_analyses()].
 #' @param rules Optional. Custom rules (`data.frame` or path to a CSV file)
-#'   passed to [suggest_analyses()]; see [rsguia_rules()].
+#'   passed to [suggest_analyses()]; see [rsguide_rules()].
 #'
 #' @details
 #' Large rasters are not read in full: statistics are estimated from a
 #' regular sample of cells.
 #'
 #' Some thresholds can be changed with [options()]:
-#' * `rsguia.min_multispectral_bands` (default 4): minimum number of spectral
+#' * `rsguide.min_multispectral_bands` (default 4): minimum number of spectral
 #'   bands for the data to be considered multispectral;
-#' * `rsguia.min_dates_long_series` (default 10): minimum number of dates for
+#' * `rsguide.min_dates_long_series` (default 10): minimum number of dates for
 #'   a time series to allow trend analysis;
-#' * `rsguia.sample_size` (default 100000): number of cells sampled.
+#' * `rsguide.sample_size` (default 100000): number of cells sampled.
 #'
-#' @return An object of class `rsguia_diagnosis`: a list with the elements
+#' @return An object of class `rsguide_diagnosis`: a list with the elements
 #'   `items` (diagnosis of each dataset), `scenes`, `series`, `overlaps`,
 #'   `contexts` (tag sets used by the recommendation rules), `alerts` and,
 #'   if `suggest = TRUE`, `suggestions`.
@@ -105,7 +105,7 @@ diagnose <- function(..., sensor = NULL, table_crs = NULL, suggest = TRUE, rules
       parameters = list(sensor = sensor, table_crs = table_crs),
       created = Sys.time()
     ),
-    class = "rsguia_diagnosis"
+    class = "rsguide_diagnosis"
   )
   if (suggest) diag <- suggest_analyses(diag, rules)
   diag

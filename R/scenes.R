@@ -179,7 +179,7 @@ undated_alerts <- function(scenes) {
   for (i in seq_along(undated)) {
     for (j in seq_along(undated)) {
       if (i < j && same_area(undated[[i]], undated[[j]])) {
-        return(alert("general", "There are several images of the same area without an identified date. If they are different dates, include the date in the file name (YYYYMMDD) or use terra::time() so rsguia recognizes the time series."))
+        return(alert("general", "There are several images of the same area without an identified date. If they are different dates, include the date in the file name (YYYYMMDD) or use terra::time() so rsguide recognizes the time series."))
       }
     }
   }
@@ -216,7 +216,7 @@ overlap_alerts <- function(o, scenes, vectors) {
   a <- list()
   if (isFALSE(o$same_crs)) {
     a[[length(a) + 1]] <- alert(vt$id, sprintf(
-      "Different CRSs (raster: %s; vector: %s). rsguia reprojected only to check the overlap; before analyzing, reproject the vector: sf::st_transform(v, terra::crs(r)).",
+      "Different CRSs (raster: %s; vector: %s). rsguide reprojected only to check the overlap; before analyzing, reproject the vector: sf::st_transform(v, terra::crs(r)).",
       crs_text(sc$crs), crs_text(vt$crs)))
   }
   if (o$status == "none") {

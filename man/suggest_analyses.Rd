@@ -7,10 +7,10 @@
 suggest_analyses(diagnosis, rules = NULL)
 }
 \arguments{
-\item{diagnosis}{An object of class \code{rsguia_diagnosis}.}
+\item{diagnosis}{An object of class \code{rsguide_diagnosis}.}
 
 \item{rules}{Optional. A \code{data.frame} of rules or the path to a CSV file;
-see \code{\link[=rsguia_rules]{rsguia_rules()}}.}
+see \code{\link[=rsguide_rules]{rsguide_rules()}}.}
 }
 \value{
 The same diagnosis, with the element \code{suggestions} (a
@@ -18,7 +18,7 @@ The same diagnosis, with the element \code{suggestions} (a
 }
 \description{
 Matches the characteristics found by \code{\link[=diagnose]{diagnose()}} against the rules table
-(\code{\link[=rsguia_rules]{rsguia_rules()}}) and lists the possible analyses, each with a rationale,
+(\code{\link[=rsguide_rules]{rsguide_rules()}}) and lists the possible analyses, each with a rationale,
 caveats, suggested packages and an example code snippet already filled in
 with your file and band names. The analyses are not run.
 }

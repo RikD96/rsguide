@@ -20,13 +20,13 @@ reference:
   - title: Recommendation rules
     desc: The table that decides what to suggest, and that you can extend.
     contents:
-      - rsguia_rules
+      - rsguide_rules
   - title: Example data
     contents:
       - jurua_data
   - title: About the package
     contents:
-      - rsguia-package
+      - rsguide-package
 
 articles:
   - title: Guides

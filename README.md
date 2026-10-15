@@ -1,8 +1,8 @@
-# rsguia
+# rsguide
 
 **Diagnose remote sensing data and suggest analyses.**
 
-rsguia takes remote sensing data (satellite images, elevation models,
+rsguide takes remote sensing data (satellite images, elevation models,
 points, polygons or tables with coordinates), automatically identifies what
 they are and suggests which analyses are possible. Each suggestion comes
 with a plain-language rationale, the necessary caveats and an example code
@@ -15,16 +15,16 @@ is aimed at ecologists and students who are new to remote sensing.
 
 ```r
 # install.packages("remotes")
-remotes::install_github("RikD96/rsguia", build_vignettes = TRUE)
+remotes::install_github("RikD96/rsguide", build_vignettes = TRUE)
 ```
 
 ## Example
 
 ```r
-library(rsguia)
+library(rsguide)
 
 # A file, an R object or a whole folder
-folder <- system.file("extdata", package = "rsguia")
+folder <- system.file("extdata", package = "rsguide")
 d <- diagnose(folder)
 d                     # diagnosis and list of suggested analyses
 summary(d)            # rationale and caveats of each analysis
@@ -54,20 +54,20 @@ points, zonal statistics and landscape metrics.
 
 Recommendations come from a table (`inst/rules/rules.csv`) where each row
 is an analysis, with the condition under which it is suggested. Inspect it
-with `rsguia_rules()` and add your own rules without touching the code:
+with `rsguide_rules()` and add your own rules without touching the code:
 
 ```r
-my_rules <- rbind(rsguia_rules(), new_rule)
+my_rules <- rbind(rsguide_rules(), new_rule)
 diagnose(folder, rules = my_rules)
 ```
 
 ## Documentation
 
-* `?rsguia`: package overview, accepted inputs and recognized sensors.
-* `vignette("case-study-jurua", package = "rsguia")`: diagnosis of
+* `?rsguide`: package overview, accepted inputs and recognized sensors.
+* `vignette("case-study-jurua", package = "rsguide")`: diagnosis of
   Sentinel-2 images of the Jurua River, near Cruzeiro do Sul (Acre,
   Brazil), from a single file to a folder with a time series, a DEM and
   field plots.
-* `vignette("custom-rules", package = "rsguia")`: how to add new analyses,
+* `vignette("custom-rules", package = "rsguide")`: how to add new analyses,
   write conditions and code templates.
 * `?jurua_data`: the example data and their sources.

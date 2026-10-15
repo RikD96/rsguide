@@ -1,4 +1,4 @@
-Package: rsguia
+Package: rsguide
 Title: Diagnose Remote Sensing Data and Suggest Analyses
 Version: 0.1.0
 Authors@R: 

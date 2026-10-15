@@ -2,7 +2,7 @@
 .Rhistory
 .RData
 *.Rcheck/
-rsguia_*.tar.gz
+rsguide_*.tar.gz
 inst/doc
 docs
 manual/
