@@ -33,7 +33,7 @@ print.rsguide_diagnosis <- function(x, ...) {
     for (k in seq_len(nrow(x$overlaps))) {
       o <- x$overlaps[k, ]
       extra <- if (o$status == "partial") paste0(" (", fmt_pct(o$proportion), " of the features)") else ""
-      bullet(sprintf("%s \u00d7 %s: %s%s", o$vector, o$scene, labels[[o$status]], extra))
+      bullet(sprintf("%s \u00d7 %s: %s%s", o$vector, scene_ref(x$scenes, o$scene), labels[[o$status]], extra))
     }
   }
 
@@ -46,6 +46,13 @@ print.rsguide_diagnosis <- function(x, ...) {
   }
   if (!is.null(x$suggestions)) print_suggestion_list(x$suggestions)
   invisible(x)
+}
+
+# Single-file scenes are shown by their raster id (R1); combined scenes keep
+# their own id (SC1), which is listed under "Combined scenes"
+scene_ref <- function(scenes, id) {
+  sc <- Filter(function(s) s$id == id, scenes)[[1]]
+  if (length(sc$items) == 1) sc$items else id
 }
 
 # Short list, used by print()

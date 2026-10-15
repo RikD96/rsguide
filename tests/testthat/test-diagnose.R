@@ -6,7 +6,7 @@ test_that("in-memory Sentinel-2 raster", {
   expect_equal(r1$sensor$sensor, "sentinel2")
   expect_equal(r1$scale$type, "int_10000")
   expect_equal(r1$crs$epsg, 32718)
-  tags <- d$contexts$C1$tags
+  tags <- d$contexts$SC1$tags
   expect_true(all(c("raster", "band:red", "band:nir", "band:swir2", "multispectral") %in% tags))
   expect_false("dem" %in% tags)
 })
@@ -14,8 +14,8 @@ test_that("in-memory Sentinel-2 raster", {
 test_that("a DEM gets the dem tag", {
   d <- diagnose(fake_dem())
   expect_true(d$items$R1$dem$dem)
-  expect_true("dem" %in% d$contexts$C1$tags)
-  expect_false(any(grepl("^band:", d$contexts$C1$tags)))
+  expect_true("dem" %in% d$contexts$SC1$tags)
+  expect_false(any(grepl("^band:", d$contexts$SC1$tags)))
   expect_equal(d$items$R1$scale$type, "elevation")
 })
 
@@ -26,7 +26,7 @@ test_that("a lon/lat table becomes points and the overlap is checked", {
   expect_equal(d$items$T1$crs$epsg, 4326)
   expect_equal(d$overlaps$status, "full")
   expect_false(d$overlaps$same_crs)
-  tags <- d$contexts[["C1+T1"]]$tags
+  tags <- d$contexts[["SC1+T1"]]$tags
   expect_true(all(c("vector:points", "overlap", "crs_mismatch", "vector:labeled") %in% tags))
   expect_true(any(grepl("Different CRSs", d$alerts$message)))
 })
@@ -34,7 +34,7 @@ test_that("a lon/lat table becomes points and the overlap is checked", {
 test_that("points outside the raster are reported", {
   d <- diagnose(fake_raster(), fake_points(inside = FALSE))
   expect_equal(d$overlaps$status, "none")
-  expect_false("overlap" %in% d$contexts[["C1+T1"]]$tags)
+  expect_false("overlap" %in% d$contexts[["SC1+T1"]]$tags)
 })
 
 test_that("sf polygons in the same CRS", {
@@ -42,7 +42,7 @@ test_that("sf polygons in the same CRS", {
   expect_equal(d$items$V1$geometries, "polygons")
   expect_equal(d$overlaps$status, "full")
   expect_true(d$overlaps$same_crs)
-  expect_true("vector:polygons" %in% d$contexts[["C1+V1"]]$tags)
+  expect_true("vector:polygons" %in% d$contexts[["SC1+V1"]]$tags)
 })
 
 test_that("coordinate columns with various names and decimal commas", {
@@ -95,7 +95,7 @@ test_that("Sentinel-2 bands in separate files form one scene", {
   expect_length(d$scenes, 1)
   expect_length(d$scenes[[1]]$items, 4)
   expect_length(d$series, 0)
-  expect_true("multispectral" %in% d$contexts$C1$tags)
+  expect_true("multispectral" %in% d$contexts$SC1$tags)
   expect_equal(d$scenes[[1]]$sensor, "sentinel2")
 })
 
@@ -109,7 +109,7 @@ test_that("unrecognized layers and missing CRS raise alerts", {
   r <- fake_raster(c("lyr1", "lyr2", "lyr3", "lyr4"))
   d <- diagnose(r)
   expect_true(any(grepl("did not recognize the layer names", d$alerts$message)))
-  expect_true("multispectral" %in% d$contexts$C1$tags)
+  expect_true("multispectral" %in% d$contexts$SC1$tags)
 
   terra::crs(r) <- ""
   d <- diagnose(r)

@@ -55,7 +55,7 @@ group_scenes <- function(rasters) {
     }
     if (is.na(target)) groups[[length(groups) + 1]] <- list(it) else groups[[target]] <- c(groups[[target]], list(it))
   }
-  lapply(seq_along(groups), function(k) finalize_scene(groups[[k]], paste0("C", k)))
+  lapply(seq_along(groups), function(k) finalize_scene(groups[[k]], paste0("SC", k)))
 }
 
 finalize_scene <- function(items, id) {

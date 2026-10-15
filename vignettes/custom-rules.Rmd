@@ -80,7 +80,7 @@ You can test a condition against the tags of a context with the internal
 function `eval_condition()`:
 
 ```{r}
-tags <- d$contexts$C2$tags
+tags <- d$contexts$SC2$tags
 rsguide:::eval_condition("band:green & band:nir", tags)
 rsguide:::eval_condition("dem | time_series", tags)
 ```
