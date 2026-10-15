@@ -3,3 +3,4 @@
 .RData
 *.Rcheck/
 rsguia_*.tar.gz
+inst/doc

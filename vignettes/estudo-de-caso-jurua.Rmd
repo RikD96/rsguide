@@ -1,0 +1,222 @@
+---
+title: "Estudo de caso: Vale do Juruá (Acre)"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Estudo de caso: Vale do Juruá (Acre)}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 6,
+  fig.height = 5,
+  dpi = 72,
+  out.width = "100%"
+)
+options(width = 90, cli.num_colors = 1)
+```
+
+Você recebeu um arquivo de imagem de satélite e não sabe por onde começar?
+O **rsguia** olha os seus dados, descobre o que eles são e sugere quais
+análises são possíveis, explicando em linguagem simples por que cada uma faz
+sentido, que cuidados tomar e como fazê-la no R.
+
+O rsguia **não executa** as análises: ele diagnostica e recomenda. A decisão
+(e a interpretação) continua sendo sua.
+
+Neste estudo de caso usamos dados reais do rio Juruá, perto de Cruzeiro do
+Sul (AC).
+
+```{r setup}
+library(rsguia)
+```
+
+## Os dados
+
+O pacote traz quatro arquivos de exemplo, em `inst/extdata`:
+
+```{r}
+pasta <- system.file("extdata", package = "rsguia")
+list.files(pasta)
+```
+
+* `jurua_s2_20190816.tif` e `jurua_s2_20240814.tif`: recortes de 2,5 × 2,5 km
+  de imagens **Sentinel-2** (nível L2A, Coleção 1), na estação seca de 2019 e
+  de 2024, com sete bandas a 10 m. Os valores estão exatamente como vêm do
+  provedor (números inteiros).
+* `jurua_mde_copernicus.tif`: o **modelo digital de elevação** Copernicus
+  GLO-30 da mesma área.
+* `jurua_parcelas.csv`: 25 parcelas de campo **fictícias**, com longitude e
+  latitude, só para demonstração.
+
+Os dados foram obtidos da plataforma pública Earth Search (AWS); o script que
+os gerou está em `data-raw/jurua.R`, no repositório do pacote.
+
+## 1. Diagnóstico de uma imagem
+
+Comece entregando o arquivo para `diagnosticar()`:
+
+```{r}
+img <- file.path(pasta, "jurua_s2_20240814.tif")
+d <- diagnosticar(img)
+d
+```
+
+Repare no que o rsguia descobriu sozinho:
+
+* **Sensor:** pelos nomes das bandas (`B02`, `B03`, ..., `B12`), a imagem é
+  do Sentinel-2. Cada banda foi associada à sua faixa do espectro (azul,
+  verde, vermelho, infravermelho...).
+* **Escala:** os valores são inteiros e quase todos ficam acima de 1000. Isso
+  revela o *deslocamento de +1000* que o Sentinel-2 passou a usar em 2022: a
+  reflectância real é `(valor - 1000) / 10000`. Esquecer esse detalhe é um
+  erro comum, que distorce índices como o EVI.
+* **Sugestões:** com azul, verde, vermelho, borda do vermelho, infravermelho
+  próximo e de ondas curtas, a imagem permite índices de vegetação, de água e
+  de queimada, além da classificação do uso do solo.
+
+Para ler a justificativa e os cuidados de cada análise, use `summary()`. Para
+não deixar este documento longo, mostramos aqui só o começo:
+
+```{r}
+resumo <- capture.output(summary(d))
+cat(head(resumo, 32), sep = "\n")
+```
+
+## 2. Do diagnóstico ao código
+
+Cada sugestão vem com um exemplo de código, **já preenchido** com o caminho
+do seu arquivo, os nomes das suas bandas e a conversão de escala correta.
+Vamos ver o do MNDWI, índice que realça a água:
+
+```{r}
+codigo <- ver_codigo(d, "mndwi")
+```
+
+O código pode ser copiado e executado como está. Aqui o executamos
+diretamente a partir do texto devolvido por `ver_codigo()`:
+
+```{r mndwi, results = "hide", fig.show = "hold", fig.height = 4.5}
+eval(parse(text = codigo))
+```
+
+O canal principal do Juruá aparece nos cantos da imagem e um meandro em forma
+de ferradura atravessa o centro. O limiar de água (`mndwi > 0`) é só um ponto
+de partida: como lembram os cuidados, ele deve ser conferido na imagem.
+
+## 3. Diagnóstico de uma pasta inteira
+
+Na prática, raramente temos um único arquivo. Entregue a pasta toda:
+
+```{r}
+dp <- diagnosticar(pasta)
+dp
+```
+
+Agora o rsguia:
+
+* identificou a **série temporal** (as datas estão nos nomes dos arquivos) e
+  sugeriu a detecção de mudanças;
+* reconheceu o **MDE** e sugeriu declividade, orientação e drenagem;
+* leu as **parcelas** do CSV, encontrou as colunas `longitude`/`latitude`,
+  viu que elas caem dentro dos rasters e sugeriu extrair os valores para cada
+  parcela;
+* avisou que as parcelas (graus, WGS 84) e os rasters (UTM 18S) estão em
+  sistemas de coordenadas diferentes.
+
+## 4. Exportando o relatório
+
+`as.data.frame()` transforma as sugestões numa tabela, que pode ser salva em
+CSV e aberta numa planilha:
+
+```{r}
+tabela <- as.data.frame(dp)
+knitr::kable(unique(tabela[, c("analise", "categoria", "pacotes")]), row.names = FALSE)
+```
+
+```{r, eval = FALSE}
+utils::write.csv(tabela, "relatorio_rsguia.csv", row.names = FALSE)
+```
+
+Também dá para exportar a descrição de cada arquivo:
+
+```{r}
+itens <- as.data.frame(dp, tipo = "itens")
+knitr::kable(itens[, c("id", "nome", "tipo", "resolucao_m", "sensor", "escala")])
+```
+
+## 5. Executando uma sugestão: o que mudou entre 2019 e 2024?
+
+O código sugerido para a série temporal calcula a diferença de NDVI entre a
+primeira e a última data:
+
+```{r}
+ver_codigo(dp, "mudanca")
+```
+
+```{r mudanca, results = "hide", fig.height = 4.5}
+eval(parse(text = ver_codigo(dp, "mudanca")))
+```
+
+Valores positivos (ganho de vegetação) aparecem ao longo das margens do
+meandro, que parecem ter sido colonizadas pela vegetação. Já os valores mais
+negativos estão no canal principal do rio (canto inferior esquerdo): ali não
+houve perda de vegetação, e sim mudança na própria água (cor, sedimentos,
+nível do rio), que também altera o NDVI. Nem toda "mudança" é de vegetação!
+Para interpretar com segurança, compare com as imagens em cor verdadeira e
+lembre dos cuidados: mesma estação do ano, mesma escala e ausência de nuvens
+nas duas datas.
+
+## 6. Ajustando as regras
+
+As recomendações vêm de uma tabela editável. Para vê-la:
+
+```{r}
+regras <- regras_rsguia()
+knitr::kable(regras[, c("id", "condicao")])
+```
+
+A coluna `condicao` combina **etiquetas** produzidas pelo diagnóstico
+(`banda:red`, `mde`, `serie_temporal`, `vetor:pontos`, `sobreposicao`...) com
+`&` (e), `|` (ou) e `!` (não). As etiquetas encontradas nos seus dados ficam
+em `contextos`:
+
+```{r}
+dp$contextos$C2$tags
+```
+
+Você pode acrescentar regras próprias sem mexer no pacote:
+
+```{r}
+gndvi <- data.frame(
+  id = "gndvi",
+  analise = "GNDVI (NDVI verde)",
+  categoria = "Índices de vegetação",
+  condicao = "banda:green & banda:nir",
+  justificativa = "Usa o verde no lugar do vermelho e é mais sensível à clorofila.",
+  cuidados = "Use reflectância de superfície | Remova nuvens e sombras",
+  pacotes = "terra"
+)
+d2 <- diagnosticar(img, regras = rbind(regras, gndvi))
+"gndvi" %in% d2$sugestoes$id
+```
+
+Alguns limiares também podem ser ajustados. A análise de tendência, por
+exemplo, só é sugerida com 10 datas ou mais; para mudar:
+
+```{r, eval = FALSE}
+options(rsguia.min_datas_serie_longa = 6)
+```
+
+## Limitações
+
+* O rsguia reconhece o sensor pelos **nomes** das bandas e dos arquivos. Se as
+  bandas tiverem nomes genéricos (`lyr.1`, `banda_1`), renomeie-as
+  (`names(r) <- c("blue", "green", "red", "nir")`) ou informe o sensor:
+  `diagnosticar(x, sensor = "sentinel2")`.
+* A detecção de MDE e de escala é baseada em heurísticas; confira os alertas.
+* As sugestões indicam o que é **possível** com os dados, não o que é
+  adequado à sua pergunta de pesquisa. Essa escolha é sua.
