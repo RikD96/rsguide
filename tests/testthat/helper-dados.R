@@ -57,3 +57,12 @@ pasta_com_rasters <- function(lista) {
   }
   pasta
 }
+
+# Mapa de classes (ex.: tipo MapBiomas) com 4 classes em manchas
+mapa_classes_falso <- function() {
+  set.seed(4)
+  r <- terra::rast(nrows = 30, ncols = 30, crs = "EPSG:32718", extent = terra::ext(EXT_TESTE))
+  terra::values(r) <- rep(sample(c(3L, 12L, 15L, 33L), 36, replace = TRUE), each = 25)
+  names(r) <- "cobertura"
+  r
+}

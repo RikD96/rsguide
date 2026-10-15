@@ -8,6 +8,7 @@
 #   {conversao}             a mesma conversão como expressão de `x`
 #   {indice_expr}, {indice_nome}  NDVI (se houver vermelho e NIR) ou 1ª camada
 #   {datas}                 vetor de datas da série
+#   {coluna_classe}         coluna de classes do vetor (amostras de treino)
 #   {blue}, {green}, {red}, {rededge}, {nir}, {swir1}, {swir2}...  nomes das camadas
 
 ler_modelo <- function(regra) {
@@ -73,6 +74,8 @@ montar_codigo <- function(regra, cx, diag) {
     datas <- if (!is.null(serie)) serie$datas else cena$datas
     valores$datas <- sprintf("as.Date(c(%s))", paste(texto_r(format(datas)), collapse = ", "))
   }
+  if (!is.null(vetor) && length(vetor$colunas_rotulo)) valores$coluna_classe <- vetor$colunas_rotulo[1]
+  if (is.null(valores$coluna_classe)) valores$coluna_classe <- "classe"
   for (g in names(ROTULOS_GRUPO)) {
     if (is.null(valores[[g]])) valores[[g]] <- paste0("NOME_DA_BANDA_", toupper(g))
   }

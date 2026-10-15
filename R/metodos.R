@@ -45,8 +45,32 @@ print.rsguia_diagnostico <- function(x, ...) {
       cat(simb, " [", x$alertas$item[k], "] ", x$alertas$mensagem[k], "\n", sep = "")
     }
   }
-  if (!is.null(x$sugestoes)) imprimir_sugestoes(x$sugestoes)
+  if (!is.null(x$sugestoes)) imprimir_lista_sugestoes(x$sugestoes)
   invisible(x)
+}
+
+# Lista curta, usada pelo print()
+imprimir_lista_sugestoes <- function(s) {
+  cat("\n", cli::rule(left = sprintf("An\u00e1lises sugeridas (%d)", length(unique(s$id))), line = 2),
+      "\n", sep = "")
+  if (!nrow(s)) {
+    cat("Nenhuma an\u00e1lise da tabela de regras se aplica a estes dados.\n")
+    return(invisible())
+  }
+  for (categoria in unique(s$categoria)) {
+    cat(cli::style_bold(categoria), "\n", sep = "")
+    bloco <- s[s$categoria == categoria, , drop = FALSE]
+    for (id in unique(bloco$id)) {
+      r <- bloco[bloco$id == id, , drop = FALSE]
+      alvos <- unique(r$aplica_a)
+      onde <- if (length(alvos) <= 2) paste(alvos, collapse = "; ") else
+        sprintf("%d conjuntos de dados", length(alvos))
+      cat("  ", cli::symbol$bullet, " ", r$analise[1], " ", cli::col_grey(sprintf("[%s] \u2192 %s", id, onde)),
+          "\n", sep = "")
+    }
+  }
+  cat("\n", cli::col_blue("i"), " Justificativas e cuidados: summary(). C\u00f3digo de exemplo: ver_codigo(..., \"",
+      s$id[1], "\"). Tabela para exportar: as.data.frame().\n", sep = "")
 }
 
 escrever <- function(texto, recuo, recuo_seguinte = recuo + 2) {
@@ -54,7 +78,8 @@ escrever <- function(texto, recuo, recuo_seguinte = recuo + 2) {
   cat(strwrap(texto, width = largura, indent = recuo, exdent = recuo_seguinte), sep = "\n")
 }
 
-imprimir_sugestoes <- function(s) {
+# Versão detalhada, usada pelo summary()
+imprimir_sugestoes <- function(s, codigo = FALSE) {
   cat("\n", cli::rule(left = sprintf("An\u00e1lises sugeridas (%d)", length(unique(s$id))), line = 2),
       "\n", sep = "")
   if (!nrow(s)) {
@@ -76,10 +101,19 @@ imprimir_sugestoes <- function(s) {
         escrever(paste("-", cuidado), 5, 7)
       }
       escrever(paste("Pacotes:", r$pacotes[1]), 3)
+      if (codigo) {
+        for (k in seq_len(nrow(r))) {
+          if (is.na(r$codigo[k])) next
+          cat("   C\u00f3digo", if (nrow(r) > 1) paste0("(", r$aplica_a[k], ")"), ":\n", sep = "")
+          cat(paste0("     ", strsplit(r$codigo[k], "\n", fixed = TRUE)[[1]]), sep = "\n")
+        }
+      }
     }
   }
-  cat("\n", cli::col_blue("i"), " Para ver o c\u00f3digo de exemplo: ver_codigo(diagnostico, \"",
-      s$id[1], "\"). Para todos: ver_codigo(diagnostico).\n", sep = "")
+  if (!codigo) {
+    cat("\n", cli::col_blue("i"), " Para ver o c\u00f3digo: ver_codigo(..., \"", s$id[1],
+        "\") ou summary(..., codigo = TRUE).\n", sep = "")
+  }
 }
 
 linha <- function(...) cat(cli::symbol$bullet, " ", ..., "\n", sep = "")

@@ -141,5 +141,6 @@ test_that("print mostra o diagnóstico em português", {
   expect_true(any(grepl("Sentinel-2", saida)))
   expect_true(any(grepl("Sobreposi", saida)))
   expect_true(any(grepl("Alertas", saida)))
-  expect_invisible(print(d))
+  capture.output(res <- withVisible(print(d)))
+  expect_false(res$visible)
 })

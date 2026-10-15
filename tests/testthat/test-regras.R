@@ -89,21 +89,41 @@ test_that("o código gerado para cada sugestão roda sem erros", {
   terra::writeRaster(mde_falso(), file.path(pasta, "mde.tif"))
   utils::write.csv2(pontos_falsos(), file.path(pasta, "parcelas.csv"), row.names = FALSE)
   sf::st_write(poligonos_falsos(), file.path(pasta, "talhoes.gpkg"), quiet = TRUE)
+  terra::writeRaster(mapa_classes_falso(), file.path(pasta, "mapbiomas.tif"), datatype = "INT1U")
 
   op <- options(rsguia.min_datas_serie_longa = 2)
   on.exit(options(op), add = TRUE)
   d <- diagnosticar(pasta)
   s <- d$sugestoes
   expect_true(all(c("ndvi", "ndre", "mudanca", "tendencia", "declividade", "bacias",
-                    "extracao", "zonal") %in% s$id))
+                    "extracao", "zonal", "class_sup_amostras", "metricas_paisagem") %in% s$id))
 
   grDevices::pdf(NULL)
   on.exit(grDevices::dev.off(), add = TRUE)
   executaveis <- s[s$id != "class_sup", , drop = FALSE]  # precisa de amostras do usuário
+  if (!requireNamespace("randomForest", quietly = TRUE)) executaveis <- executaveis[executaveis$id != "class_sup_amostras", ]
+  if (!requireNamespace("landscapemetrics", quietly = TRUE)) executaveis <- executaveis[executaveis$id != "metricas_paisagem", ]
   for (k in seq_len(nrow(executaveis))) {
     expect_no_error(
       utils::capture.output(eval(parse(text = executaveis$codigo[k]), envir = new.env())),
       message = paste(executaveis$id[k], executaveis$contexto[k])
     )
   }
+})
+
+test_that("mapa de classes sugere métricas de paisagem", {
+  d <- diagnosticar(mapa_classes_falso())
+  expect_equal(d$itens$R1$escala$tipo, "categorica")
+  expect_true("metricas_paisagem" %in% d$sugestoes$id)
+  expect_false("declividade" %in% d$sugestoes$id)
+})
+
+test_that("pontos com classes sugerem classificação com as amostras do usuário", {
+  d <- diagnosticar(raster_falso(), pontos_falsos())
+  s <- d$sugestoes
+  expect_equal(s$contexto[s$id == "class_sup_amostras"], "C1+T1")
+  expect_match(s$codigo[s$id == "class_sup_amostras"], "amostras[[\"especie\"]]", fixed = TRUE)
+
+  sem_classes <- pontos_falsos()[, c("lon", "lat")]
+  expect_false("class_sup_amostras" %in% diagnosticar(raster_falso(), sem_classes)$sugestoes$id)
 })
