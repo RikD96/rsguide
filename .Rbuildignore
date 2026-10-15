@@ -6,3 +6,4 @@
 ^docs$
 ^pkgdown$
 ^manual$
+^tests/testthat/_problems$
