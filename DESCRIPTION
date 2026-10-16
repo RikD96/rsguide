@@ -10,6 +10,8 @@ Description: Takes remote sensing data (rasters, vectors and tables with
     caveats and example code filled in with the user's own files and band
     names. Aimed at ecologists and newcomers to remote sensing.
 License: MIT + file LICENSE
+URL: https://rikd96.github.io/rsguide/, https://github.com/RikD96/rsguide
+BugReports: https://github.com/RikD96/rsguide/issues
 Depends: 
     R (>= 4.1.0)
 Imports: 

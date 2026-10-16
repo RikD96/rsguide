@@ -88,6 +88,15 @@ to the rules table.
 }
 }
 
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://rikd96.github.io/rsguide/}
+  \item \url{https://github.com/RikD96/rsguide}
+  \item Report bugs at \url{https://github.com/RikD96/rsguide/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Henrique Paulo \email{mundo.virais@gmail.com} [copyright holder]
 
