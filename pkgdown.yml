@@ -1,0 +1,10 @@
+pandoc: 3.8.3
+pkgdown: 2.2.1
+pkgdown_sha: ~
+articles:
+  case-study-jurua: case-study-jurua.html
+  custom-rules: custom-rules.html
+last_built: 2026-10-16T18:34Z
+urls:
+  reference: https://rikd96.github.io/rsguide/reference
+  article: https://rikd96.github.io/rsguide/articles
