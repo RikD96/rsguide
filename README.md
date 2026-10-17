@@ -14,7 +14,7 @@ is aimed at ecologists and students who are new to remote sensing.
 ## Installation
 
 ```r
-# install.packages("remotes")
+if (!requireNamespace("remotes", quietly = TRUE)) install.packages("remotes")
 remotes::install_github("RikD96/rsguide", build_vignettes = TRUE)
 ```
 

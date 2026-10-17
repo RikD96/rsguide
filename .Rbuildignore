@@ -9,3 +9,5 @@
 ^tests/testthat/_problems$
 ^cran-comments\.md$
 ^\.github$
+^exemplo_rsguide\.R$
+^rsguide_resultados$
