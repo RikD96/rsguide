@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   case-study-jurua: case-study-jurua.html
   custom-rules: custom-rules.html
-last_built: 2026-10-17T20:40Z
+last_built: 2026-10-18T03:02Z
 urls:
   reference: https://rikd96.github.io/rsguide/reference
   article: https://rikd96.github.io/rsguide/articles
