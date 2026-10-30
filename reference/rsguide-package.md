@@ -78,10 +78,12 @@ match more than one sensor, the package warns you; set the sensor with
 
 ## Learn more
 
-- [`vignette("case-study-jurua", package = "rsguide")`](https://rikd96.github.io/rsguide/articles/case-study-jurua.md):
-  case study with Sentinel-2 images of the Jurua River (Acre, Brazil).
+- [Case
+  study](https://rikd96.github.io/rsguide/articles/case-study-jurua.html)
+  with Sentinel-2 images of the Jurua River (Acre, Brazil).
 
-- [`vignette("custom-rules", package = "rsguide")`](https://rikd96.github.io/rsguide/articles/custom-rules.md):
+- [Custom
+  rules](https://rikd96.github.io/rsguide/articles/custom-rules.html):
   how to add new analyses to the rules table.
 
 - [`rsguide_rules()`](https://rikd96.github.io/rsguide/reference/rsguide_rules.md):
@@ -89,6 +91,12 @@ match more than one sensor, the package warns you; set the sensor with
 
 - [jurua_data](https://rikd96.github.io/rsguide/reference/jurua_data.md):
   the example data.
+
+If you installed the package with `build_vignettes = TRUE`, the two
+articles are also available with
+[`vignette("case-study-jurua", package = "rsguide")`](https://rikd96.github.io/rsguide/articles/case-study-jurua.md)
+and
+[`vignette("custom-rules", package = "rsguide")`](https://rikd96.github.io/rsguide/articles/custom-rules.md).
 
 ## See also
 
