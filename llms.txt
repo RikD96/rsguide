@@ -16,6 +16,42 @@ It is aimed at ecologists and students who are new to remote sensing.
 ``` r
 
 if (!requireNamespace("remotes", quietly = TRUE)) install.packages("remotes")
+remotes::install_github("RikD96/rsguide")
+```
+
+### System libraries on Linux
+
+On Linux, the `sf` and `terra` dependencies are compiled from source and
+need system libraries (GDAL, GEOS, PROJ and others). Install them
+**before** running the commands above:
+
+``` sh
+# Ubuntu
+sudo apt update
+sudo apt install -y libgdal-dev libgeos-dev libproj-dev libudunits2-dev \
+  libsqlite3-dev libtbb-dev libnetcdf-dev
+
+# Fedora
+sudo dnf install gdal-devel geos-devel proj-devel udunits2-devel \
+  sqlite-devel tbb-devel netcdf-devel
+```
+
+On Windows and macOS,
+[`install.packages()`](https://rdrr.io/r/utils/install.packages.html)
+normally downloads ready-made binaries of these dependencies, so this
+step is not needed.
+
+### Vignettes (optional)
+
+The command above does not build the vignettes, which can be [read
+online](https://rikd96.github.io/rsguide/articles/). To install them
+too, you need [Pandoc](https://pandoc.org/installing.html), which comes
+with RStudio (from a terminal outside RStudio, it must be on your
+`PATH`), and:
+
+``` r
+
+install.packages(c("knitr", "rmarkdown"))
 remotes::install_github("RikD96/rsguide", build_vignettes = TRUE)
 ```
 
@@ -74,12 +110,17 @@ diagnose(folder, rules = my_rules)
 
 - [`?rsguide`](https://rikd96.github.io/rsguide/reference/rsguide-package.md):
   package overview, accepted inputs and recognized sensors.
-- [`vignette("case-study-jurua", package = "rsguide")`](https://rikd96.github.io/rsguide/articles/case-study-jurua.md):
+- [Case
+  study](https://rikd96.github.io/rsguide/articles/case-study-jurua.html):
   diagnosis of Sentinel-2 images of the Jurua River, near Cruzeiro do
   Sul (Acre, Brazil), from a single file to a folder with a time series,
-  a DEM and field plots.
-- [`vignette("custom-rules", package = "rsguide")`](https://rikd96.github.io/rsguide/articles/custom-rules.md):
-  how to add new analyses, write conditions and code templates.
+  a DEM and field plots. If you built the vignettes:
+  [`vignette("case-study-jurua", package = "rsguide")`](https://rikd96.github.io/rsguide/articles/case-study-jurua.md).
+- [Custom
+  rules](https://rikd96.github.io/rsguide/articles/custom-rules.html):
+  how to add new analyses, write conditions and code templates. If you
+  built the vignettes:
+  [`vignette("custom-rules", package = "rsguide")`](https://rikd96.github.io/rsguide/articles/custom-rules.md).
 - [`?jurua_data`](https://rikd96.github.io/rsguide/reference/jurua_data.md):
   the example data and their sources.
 
