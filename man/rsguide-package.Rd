@@ -79,13 +79,17 @@ statistics of large rasters.
 \section{Learn more}{
 
 \itemize{
-\item \code{vignette("case-study-jurua", package = "rsguide")}: case study with
-Sentinel-2 images of the Jurua River (Acre, Brazil).
-\item \code{vignette("custom-rules", package = "rsguide")}: how to add new analyses
-to the rules table.
+\item \href{https://rikd96.github.io/rsguide/articles/case-study-jurua.html}{Case study}
+with Sentinel-2 images of the Jurua River (Acre, Brazil).
+\item \href{https://rikd96.github.io/rsguide/articles/custom-rules.html}{Custom rules}:
+how to add new analyses to the rules table.
 \item \code{\link[=rsguide_rules]{rsguide_rules()}}: the rules table and the available tags.
 \item \link{jurua_data}: the example data.
 }
+
+If you installed the package with \code{build_vignettes = TRUE}, the two articles
+are also available with \code{vignette("case-study-jurua", package = "rsguide")}
+and \code{vignette("custom-rules", package = "rsguide")}.
 }
 
 \seealso{

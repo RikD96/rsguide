@@ -56,12 +56,16 @@
 #'   statistics of large rasters.
 #'
 #' @section Learn more:
-#' * `vignette("case-study-jurua", package = "rsguide")`: case study with
-#'   Sentinel-2 images of the Jurua River (Acre, Brazil).
-#' * `vignette("custom-rules", package = "rsguide")`: how to add new analyses
-#'   to the rules table.
+#' * [Case study](https://rikd96.github.io/rsguide/articles/case-study-jurua.html)
+#'   with Sentinel-2 images of the Jurua River (Acre, Brazil).
+#' * [Custom rules](https://rikd96.github.io/rsguide/articles/custom-rules.html):
+#'   how to add new analyses to the rules table.
 #' * [rsguide_rules()]: the rules table and the available tags.
 #' * [jurua_data]: the example data.
+#'
+#' If you installed the package with `build_vignettes = TRUE`, the two articles
+#' are also available with `vignette("case-study-jurua", package = "rsguide")`
+#' and `vignette("custom-rules", package = "rsguide")`.
 #'
 #' @keywords package
 "_PACKAGE"
